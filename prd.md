@@ -256,12 +256,25 @@ LLM Prompt Templates must be variable-injected (not hardcoded text):
 - Versioning: Track prompt versions for A/B testing
 
 ### REQ-3: Tier-Based Bidding Strategy
-Bidding logic maps to Growth-Tier Protocol monetization models:
-- **TRIPWIRE_UPSELL**: Maximize Conversions with Target CPA
-- **DIRECT_SALE**: Target ROAS (Return on Ad Spend)
-- **LEAD_GEN**: Maximize Clicks with CPC cap
-- **BOOK_CALL**: Maximize Conversions (no target)
+Bidding logic maps to Growth-Tier Protocol monetization models. The following table defines the precise mapping between the business objective and the Google Ads API configuration.
 
+| Monetization Model | Bidding Strategy | Google Ads Setting |
+|--------------------|------------------|-------------------|
+| TRIPWIRE_UPSELL | Target CPA | MAXIMIZE_CONVERSIONS + target_cpa_micros |
+| DIRECT_SALE | Target ROAS | TARGET_ROAS + target_roas |
+| LEAD_GEN | Max Clicks | MAXIMIZE_CLICKS + cpc_bid_ceiling_micros |
+| BOOK_CALL | Target CPA | MAXIMIZE_CONVERSIONS + target_cpa_micros |
+
+#### Warm-up Strategy ("Cold Start" Constraint)
+For new campaigns, especially those using Target CPA or Target ROAS, a "warm-up" period is required to gather sufficient conversion data. The system shall not apply a `target_cpa_micros` or `target_roas` value until the campaign has registered a minimum of 15 conversions. During this initial phase, the campaign should run on a `MAXIMIZE_CONVERSIONS` or `MAXIMIZE_CLICKS` strategy without a specific target to allow the algorithm to learn.
+
+#### Learning Phase Protection
+Once a smart bidding strategy is active, its learning phase must be protected to ensure performance stability. The automated system must adhere to the following rules:
+- **Budget Changes**: Do not increase or decrease the campaign's daily budget by more than 20% in a single 24-hour period.
+- **Target Changes**: Do not change the `target_cpa_micros` or `target_roas` value by more than 20% in a single 24-hour period.
+- **Strategy Changes**: Do not change the bidding strategy of a campaign without resetting the warm-up and learning phase.
+
+Violating these constraints can reset the bidding algorithm's learning model, leading to performance volatility.
 ### REQ-4: Hierarchical Reporting Structure
 Reporting must group data by "Persona" and "Angle" regardless of vertical:
 - Level 1 Queries: Campaign/AdGroup metrics (no keyword segment)
