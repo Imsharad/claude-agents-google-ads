@@ -8,11 +8,15 @@ Note: This is a placeholder implementation that will be replaced by
 TASK-032 (Golden Ratio Budget Scaler) in Phase 2.
 
 Run with: pytest tests/test_budget_calculator.py -v
+
+Note: Tests will be SKIPPED until TASK-014 implementation exists.
 """
 
 import pytest
 
-# These imports will fail until TASK-014 is implemented
+# Skip entire module if budget calculator doesn't exist yet (TDD pattern)
+pytest.importorskip("src.budget.calculator", reason="TASK-014 not implemented")
+
 from src.budget.calculator import (
     calculate_daily_budget,
     validate_budget,

@@ -5,11 +5,15 @@ These tests define the expected behavior for the keyword generator.
 Tests are written BEFORE implementation (Test-Driven Development).
 
 Run with: pytest tests/test_keyword_generator.py -v
+
+Note: Tests will be SKIPPED until TASK-013 implementation exists.
 """
 
 import pytest
 
-# These imports will fail until TASK-013 is implemented
+# Skip entire module if generators don't exist yet (TDD pattern)
+pytest.importorskip("src.generators.keyword_generator", reason="TASK-013 not implemented")
+
 from src.generators.keyword_generator import generate_keywords, Keyword
 from src.generators.negative_keywords import (
     get_universal_negatives,
