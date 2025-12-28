@@ -1,0 +1,1087 @@
+{
+  "project": "Growth-Tier Ads Protocol Agent",
+  "version": "1.0.0",
+  "generated": "2025-12-26",
+  "metadata": {
+    "total_tasks": 47,
+    "phases": 4,
+    "last_updated": "2025-12-27",
+    "research_complete": true,
+    "status_breakdown": {
+      "ready": 23,
+      "blocked": 7,
+      "needs_spec": 16,
+      "deferred": 1
+    },
+    "milestones": {
+      "M0": "Pre-Implementation Spec Complete",
+      "M1": "MVP Foundation Ready",
+      "M2": "Agent Runtime Operational",
+      "M3": "Autonomous Optimization Live",
+      "M4": "Enterprise Features Deployed"
+    },
+    "critical_path": ["TASK-000", "TASK-001", "TASK-020", "TASK-024", "TASK-032"],
+    "estimated_total_hours": 338,
+    "recommended_team_size": "2-3 engineers + 1 product owner"
+  },
+  "phases": [
+    {
+      "id": "phase_0",
+      "name": "Pre-Implementation: Technical Specification",
+      "description": "Address critical gaps identified in stress test before any coding begins",
+      "priority": "CRITICAL",
+      "status": "NOT_STARTED",
+      "estimated_duration": "1-2 weeks",
+      "milestone": "M0",
+      "exit_criteria": [
+        "All PRD gaps closed with documented decisions",
+        "Technical architecture diagram created",
+        "API authentication successfully tested",
+        "All blocked tasks unblocked"
+      ],
+      "tasks": [
+        {
+          "id": "TASK-000",
+          "title": "Update PRD with Claude Agent SDK Architecture Section",
+          "description": "Add Section 3.4 documenting ClaudeSDKClient initialization, MCP server setup, and tool registration pattern",
+          "type": "documentation",
+          "status": "ready",
+          "priority": "P0",
+          "implementation_notes": "Use in-process MCP server pattern (not subprocess), daily session pattern (not 7-day), sidecar persistence for event logging",
+          "blocking": ["TASK-001", "TASK-002", "TASK-003", "TASK-020"],
+          "acceptance_criteria": [
+            "Section 3.4 added to PRD with subsections: 3.4.1 SDK Initialization, 3.4.2 MCP Server Setup, 3.4.3 Tool Registration Pattern",
+            "ClaudeAgentOptions configuration documented with: model selection, max_turns, system_prompt, custom_tools",
+            "MCP server pattern specified including: server lifecycle, tool discovery, error handling",
+            "System prompt structure defined with: role definition, capability boundaries, example interactions",
+            "Code examples provided for: basic initialization, tool registration, error handling"
+          ],
+          "research_references": [
+            "research_prompts_answers/01_agent_sdk.md:Section 1.2 (In-Process MCP)",
+            "research_prompts_answers/01_agent_sdk.md:Section 1.3 (Daily Session Pattern)",
+            "research_prompts_answers/01_agent_sdk.md:Section 1.4 (Sidecar Persistence)",
+            "research_summary.md:Section 1"
+          ],
+          "estimated_hours": 8,
+          "validation_method": "Peer review of PRD section + SDK expert consultation",
+          "definition_of_done": "PRD section can be used to implement TASK-020 without additional research"
+        },
+        {
+          "id": "TASK-001",
+          "title": "Define Google Ads API Version and Authentication Requirements",
+          "description": "Add REQ-5 specifying API v22+, google-ads.yaml configuration, and proto_plus settings",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P0",
+          "implementation_notes": "Target API v22 directly (skip v15-v21), implement proactive OAuth refresh every 6 days to prevent 7-day expiration",
+          "blocking": ["TASK-010", "TASK-011", "TASK-012"],
+          "acceptance_criteria": [
+            "REQ-5 added to Section 6",
+            "API version specified as v22 or higher",
+            "google-ads.yaml schema documented",
+            "Authentication flow (Installed App vs Service Account) chosen"
+          ],
+          "research_references": [
+            "research_prompts_answers/02_api_setup.md:Section 2.1 (Breaking Changes v15/v16 → v22)",
+            "research_prompts_answers/02_api_setup.md:Section 2.2 (OAuth2 7-Day Expiration)",
+            "research_summary.md:Section 2"
+          ],
+          "estimated_hours": 4
+        },
+        {
+          "id": "TASK-002",
+          "title": "Design Policy Compliance Exception Handler",
+          "description": "Add REQ-6 specifying Try-Catch-Exempt-Retry algorithm for policy violations",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P0",
+          "implementation_notes": "Use validate_only=True for pre-flight policy checks, implement Try-Catch-Exempt-Retry pattern with PolicyValidationParameter",
+          "blocking": ["TASK-025"],
+          "acceptance_criteria": [
+            "REQ-6 added to Section 6",
+            "Exception handling workflow documented",
+            "PolicyValidationParameter construction specified",
+            "Human escalation trigger conditions defined"
+          ],
+          "research_references": [
+            "google-ads-2-claude-agent.md:5.2",
+            "google-ads-2-claude-agent.md:Table 3"
+          ],
+          "estimated_hours": 6
+        },
+        {
+          "id": "TASK-003",
+          "title": "Replace Static Budget Formula with Golden Ratio Algorithm",
+          "description": "Update Section 3.3.1 to implement Fibonacci scaling and LTV:CAC decision matrix",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P1",
+          "implementation_notes": "₹2,000/day hard cap with 1.2x safety margin (₹2,400 trigger), hourly watchdog cron job, Tripwire_Exempt label for exceptions, use Portfolio Bidding Strategies for data pooling",
+          "blocking": ["TASK-014"],
+          "acceptance_criteria": [
+            "Golden Ratio formula documented: Next = Current × 1.618",
+            "LTV:CAC thresholds defined (<1.0, 1.0-2.9, 3.0-3.9, >4.0)",
+            "Circuit breaker logic specified (max daily spend)",
+            "Tripwire model exception documented"
+          ],
+          "research_references": [
+            "research_prompts_answers/03_campaigns.md:Section 3.2 (Portfolio Bidding Strategies)",
+            "research_prompts_answers/06_strategy.md:Section 8.4 (Golden Ratio Circuit Breaker)",
+            "research_summary.md:Section 3.2"
+          ],
+          "estimated_hours": 5
+        },
+        {
+          "id": "TASK-004",
+          "title": "Define Gather-Action-Verify Agent Loop",
+          "description": "Document recursive reasoning loop pattern for campaign operations",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P1",
+          "implementation_notes": "Use Session Forking for parallel strategy simulation, implement fork_session to create Strategy Engine (not just management tool), use prompt caching for cost optimization",
+          "blocking": ["TASK-020", "TASK-021"],
+          "acceptance_criteria": [
+            "Loop phases documented: Gather, Action, Verify",
+            "Verification requirements per action type",
+            "Error recovery sub-loop defined",
+            "Max iteration limits specified"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.6 (Session Forking - Parallel Strategy Simulation)",
+            "research_summary.md:Section 8.6"
+          ],
+          "estimated_hours": 4
+        },
+        {
+          "id": "TASK-005",
+          "title": "Clarify Asset Generation Scope (Text vs Visual)",
+          "description": "Make architectural decision on whether to include AssetService or limit to text-only",
+          "type": "decision",
+          "status": "ready",
+          "priority": "P1",
+          "decision_made": "TEXT-ONLY for Phase 1-3",
+          "implementation_notes": "DECISION-001: Text-only (headlines, descriptions). Visual assets deferred to Phase 4. Phase 2 will use Unsplash/Pexels stock integration (free). Schema: AdObject = { headlines:[], descriptions:[], paths:[] }",
+          "blocking": ["TASK-026"],
+          "acceptance_criteria": [
+            "Decision documented in PRD",
+            "If text-only: Update Section 3.2.2 to remove visual references",
+            "If visual: Add Section 3.5 Asset Pipeline Architecture",
+            "User story US-004 scope clarified"
+          ],
+          "research_references": [
+            "google-ads-2-claude-agent.md:Section 4"
+          ],
+          "estimated_hours": 2,
+          "requires_stakeholder_decision": true
+        },
+        {
+          "id": "TASK-006",
+          "title": "Map Monetization Models to Bidding Strategies",
+          "description": "Resolve Contradiction 1 by aligning bidding logic with Growth-Tier Protocol",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P1",
+          "implementation_notes": "SaaS Trial → Target CPA (MAXIMIZE_CONVERSIONS + target_cpa_micros), E-commerce → Target ROAS, Lead Gen → Max Clicks + CPC Cap, Brand → Max Impressions. Implement warm-up strategy (no target until 15+ conversions)",
+          "blocking": ["TASK-013"],
+          "acceptance_criteria": [
+            "Update REQ-3 with strategy mapping",
+            "TRIPWIRE_UPSELL -> Maximize Conversions (Target CPA)",
+            "DIRECT_SALE -> Target ROAS",
+            "LEAD_GEN -> Maximize Clicks with cap",
+            "BOOK_CALL -> Maximize Conversions"
+          ],
+          "research_references": [
+            "research_prompts_answers/03_campaigns.md:Section 3.1 (Bidding Strategy Mapping)",
+            "research_summary.md:Section 3.1"
+          ],
+          "estimated_hours": 3
+        },
+        {
+          "id": "TASK-007",
+          "title": "Define LLM Prompt Template Architecture",
+          "description": "Specify how variable injection works for different verticals (REQ-2 clarification)",
+          "type": "specification",
+          "status": "ready",
+          "priority": "P1",
+          "implementation_notes": "Use YAML for storage (native multi-line support), Jinja2 for injection (logic support, safe variable injection). Pydantic for output validation. Multi-mode prompting: Setup Mode (creative) vs Monitoring Mode (conservative)",
+          "blocking": ["TASK-022", "TASK-023"],
+          "acceptance_criteria": [
+            "Prompt storage format defined (YAML, JSON, or Python f-strings)",
+            "Variable placeholders documented: {vertical_type}, {offer_name}, etc.",
+            "Template switching mechanism specified",
+            "Example prompts for all 3 use cases provided"
+          ],
+          "research_references": [
+            "research_prompts_answers/04_ai_generation.md:Section 4.1 (YAML + Jinja2)",
+            "research_prompts_answers/04_ai_generation.md:Section 4.2 (Pydantic Validation)",
+            "research_prompts_answers/01_agent_sdk.md:Section 1.5 (System Prompt Engineering)",
+            "research_summary.md:Section 4"
+          ],
+          "estimated_hours": 6
+        }
+      ]
+    },
+    {
+      "id": "phase_1",
+      "name": "Phase 1: Foundation (MVP - Core 30%)",
+      "description": "Implement fully-specified features from PRD that don't depend on blocked architecture",
+      "priority": "HIGH",
+      "status": "NOT_STARTED",
+      "estimated_duration": "2-3 weeks",
+      "milestone": "M1",
+      "dependencies": ["phase_0"],
+      "exit_criteria": [
+        "Test suite passing with >=80% coverage",
+        "Environment setup script tested on clean machine",
+        "Example configurations validated against real API",
+        "All infrastructure tasks completed"
+      ],
+      "tasks": [
+        {
+          "id": "TASK-010",
+          "title": "Setup Python Environment and Dependencies",
+          "description": "Initialize project with required packages: claude-agent-sdk, google-ads, python-dotenv",
+          "type": "infrastructure",
+          "status": "ready",
+          "priority": "P0",
+          "blocking": ["TASK-011"],
+          "acceptance_criteria": [
+            "Python 3.9+ virtual environment created",
+            "requirements.txt with pinned versions",
+            "claude-agent-sdk installed",
+            "google-ads v22+ installed",
+            "Environment activated and tested"
+          ],
+          "research_references": [
+            "google-ads-claude-code.md:Table 1"
+          ],
+          "estimated_hours": 2,
+          "technical_notes": "Use uv or pip-tools for deterministic builds"
+        },
+        {
+          "id": "TASK-011",
+          "title": "Configure Google Ads API Authentication",
+          "description": "Create google-ads.yaml with OAuth2 credentials and test connection",
+          "type": "infrastructure",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-001", "TASK-010"],
+          "blocking": ["TASK-012"],
+          "acceptance_criteria": [
+            "google-ads.yaml created with structure from research",
+            "OAuth2 flow completed (get refresh token)",
+            "Test connection with GoogleAdsClient.load_from_storage()",
+            "Successfully query customer account details"
+          ],
+          "research_references": [
+            "google-ads-claude-code.md:32-38"
+          ],
+          "estimated_hours": 4,
+          "security_notes": "Add google-ads.yaml to .gitignore, document setup in README"
+        },
+        {
+          "id": "TASK-012",
+          "title": "Implement Configuration Schema Validation",
+          "description": "Create Pydantic models for Campaign Configuration payload (US-001)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-011"],
+          "acceptance_criteria": [
+            "Pydantic model: CampaignConfiguration with all fields from PRD:16-21",
+            "Enum for vertical_type (EDUCATION, SAAS, SERVICE, E-COMMERCE)",
+            "Enum for monetization_model",
+            "Validation rules: required fields, string length limits",
+            "Unit tests for valid/invalid configs"
+          ],
+          "research_references": [
+            "prd.md:13-21"
+          ],
+          "estimated_hours": 4,
+          "deliverables": ["src/models/configuration.py", "tests/test_configuration.py"]
+        },
+        {
+          "id": "TASK-013",
+          "title": "Create Keyword Strategy Generator",
+          "description": "Implement phrase match keyword generation with universal negatives (US-006)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-012"],
+          "acceptance_criteria": [
+            "Function: generate_keywords(config: CampaignConfiguration) -> List[Keyword]",
+            "Returns keywords with PHRASE match type",
+            "Includes universal negative list: free, cheap, crack, job, etc.",
+            "Seeds from offer_name and value_proposition",
+            "Returns 10-30 keyword candidates"
+          ],
+          "research_references": [
+            "prd.md:44-46",
+            "google-ads-20k.md:Section 3"
+          ],
+          "estimated_hours": 6,
+          "deliverables": ["src/generators/keyword_generator.py", "tests/test_keyword_generator.py"]
+        },
+        {
+          "id": "TASK-014",
+          "title": "Implement Static Budget Calculator",
+          "description": "Basic budget allocation (₹20k/30 days) - will be replaced in Phase 2 with Golden Ratio",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-012"],
+          "acceptance_criteria": [
+            "Function: calculate_daily_budget(total_budget: int, duration_days: int) -> int",
+            "Returns daily budget in micros (for Google Ads API)",
+            "Validates total_budget >= 10000 (₹10k minimum)",
+            "Includes TODO comment referencing Golden Ratio upgrade"
+          ],
+          "research_references": [
+            "prd.md:41"
+          ],
+          "estimated_hours": 2,
+          "deliverables": ["src/budget/calculator.py"],
+          "deprecation_note": "Will be replaced by TASK-032 in Phase 2"
+        },
+        {
+          "id": "TASK-015",
+          "title": "Create Example Configurations for 3 Verticals",
+          "description": "Implement documentation examples from Section 5 (US-010)",
+          "type": "documentation",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-012"],
+          "acceptance_criteria": [
+            "examples/workshop_config.json (Education)",
+            "examples/dentist_config.json (Service)",
+            "examples/saas_config.json (SaaS)",
+            "Each passes CampaignConfiguration validation",
+            "README.md updated with usage examples"
+          ],
+          "research_references": [
+            "prd.md:Section 5"
+          ],
+          "estimated_hours": 3,
+          "deliverables": ["examples/*.json", "README.md"]
+        },
+        {
+          "id": "TASK-016",
+          "title": "Setup Testing Framework",
+          "description": "Configure pytest, coverage, and CI pipeline",
+          "type": "infrastructure",
+          "status": "ready",
+          "priority": "P2",
+          "acceptance_criteria": [
+            "pytest.ini configured",
+            "Coverage target: 80% for Phase 1 code",
+            "GitHub Actions workflow for automated tests",
+            "Pre-commit hooks for linting"
+          ],
+          "estimated_hours": 4,
+          "deliverables": [".github/workflows/tests.yml", "pytest.ini", ".pre-commit-config.yaml"]
+        }
+      ]
+    },
+    {
+      "id": "phase_2",
+      "name": "Phase 2: Agent Core (Enable 40%)",
+      "description": "Implement Claude Agent SDK integration and critical automation features",
+      "priority": "HIGH",
+      "status": "NOT_STARTED",
+      "estimated_duration": "3-4 weeks",
+      "milestone": "M2",
+      "dependencies": ["phase_1", "phase_0"],
+      "exit_criteria": [
+        "Agent can create complete campaign end-to-end",
+        "Policy exemption handler successfully tested",
+        "User approval workflow functional",
+        "All core generation tools operational"
+      ],
+      "tasks": [
+        {
+          "id": "TASK-020",
+          "title": "Initialize Claude Agent SDK Runtime",
+          "description": "Implement ClaudeSDKClient with MCP server (US-BLOCKED-005)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-000", "TASK-004"],
+          "implementation_notes": "Use in-process MCP server (create_sdk_mcp_server), implement custom can_use_tool permission callback with 3-tier safety (Auto-Deny/Auto-Allow/Ask-Human), always-on container with internal scheduler",
+          "blocking": ["TASK-021", "TASK-022", "TASK-023"],
+          "acceptance_criteria": [
+            "ClaudeAgentOptions configured with model: claude-3-5-sonnet",
+            "max_turns set to 30",
+            "System prompt loaded from template",
+            "ClaudeSDKClient initialized and can accept queries",
+            "Basic health check: Agent responds to 'Hello'"
+          ],
+          "research_references": [
+            "research_prompts_answers/01_agent_sdk.md:Section 1.1 (Permission System)",
+            "research_prompts_answers/01_agent_sdk.md:Section 1.2 (In-Process MCP Server)",
+            "research_prompts_answers/05_production.md:Section 2.1 (Containerized VM)",
+            "research_summary.md:Section 1"
+          ],
+          "estimated_hours": 8,
+          "deliverables": ["src/agent/client.py", "tests/test_agent_client.py"]
+        },
+        {
+          "id": "TASK-021",
+          "title": "Create Google Ads MCP Tool: fetch_search_terms",
+          "description": "Implement first Google Ads API tool for agent",
+          "type": "development",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Use official google-ads-mcp server for GAQL queries (read-only operations), implement pagination handling",
+          "acceptance_criteria": [
+            "@tool decorator applied to function",
+            "Uses GoogleAdsService.search_stream",
+            "Accepts customer_id and GAQL query_string",
+            "Returns formatted results (limit 50 for context)",
+            "Tool registered in MCP server"
+          ],
+          "research_references": [
+            "research_prompts_answers/02_api_setup.md:Section 2.4 (GAQL Query Optimization)",
+            "research_summary.md:Section 2.4"
+          ],
+          "estimated_hours": 6,
+          "deliverables": ["src/tools/search_terms_tool.py", "tests/test_search_terms_tool.py"]
+        },
+        {
+          "id": "TASK-022",
+          "title": "Implement Persona Generation with LLM",
+          "description": "Create tool to generate 3 sub-personas from target audience (US-002)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020", "TASK-007"],
+          "implementation_notes": "Use YAML prompt templates with Jinja2 variable injection, Pydantic schema validation (PersonaSchema with name, pain_point, purchase_driver, keywords fields)",
+          "acceptance_criteria": [
+            "LLM prompt template with {target_audience_broad}, {vertical_type} variables",
+            "Returns 3 persona objects with: name, pain_point, purchase_driver",
+            "Prompt instructs LLM to identify distinct psychological cohorts",
+            "Output validated against Pydantic schema",
+            "Integration test with example configs"
+          ],
+          "research_references": [
+            "research_prompts_answers/04_ai_generation.md:Section 4.2 (Pydantic Validation)",
+            "research_summary.md:Section 4.2"
+          ],
+          "estimated_hours": 8,
+          "deliverables": ["src/generators/persona_generator.py", "prompts/persona_generation.yaml", "tests/test_persona_generator.py"]
+        },
+        {
+          "id": "TASK-023",
+          "title": "Implement Polarity Ad Copy Generator",
+          "description": "Generate Angle A (Pull) and Angle B (Push) ad variations (US-003)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020", "TASK-007", "TASK-022"],
+          "implementation_notes": "Generate 2 variants: Urgency (limited time, scarcity, loss aversion) vs Value (long-term benefits, social proof). Enforce 30-char headlines, 90-char descriptions. Policy pre-check with validate_only=True",
+          "acceptance_criteria": [
+            "Prompt templates for Pull (Desire/Gain) and Push (Fear/FOMO)",
+            "Google Ads format validation: 30 char headlines, 90 char descriptions",
+            "Returns 2 ad variations per persona (6 total ads)",
+            "Character limit enforcement",
+            "Avoids prohibited claims (tested against policy keywords)"
+          ],
+          "research_references": [
+            "research_prompts_answers/04_ai_generation.md:Section 4.3 (Ad Copy Polarity Testing)",
+            "research_summary.md:Section 4.3"
+          ],
+          "estimated_hours": 10,
+          "deliverables": ["src/generators/ad_copy_generator.py", "prompts/polarity_ad.yaml", "tests/test_ad_copy_generator.py"]
+        },
+        {
+          "id": "TASK-024",
+          "title": "Create Google Ads MCP Tool: create_growth_tier_campaign",
+          "description": "Implement campaign creation with tier-based bidding",
+          "type": "development",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-020", "TASK-006"],
+          "implementation_notes": "Use v22 API, implement campaign naming convention: {Status}_{Vertical}_{Offer}_{Geo}_{Network}_{MatchType}_{Date} (e.g., 🚀_SaaS_FreeTrial_IN_Srch_Exact_2025Q1). Apply appropriate labels for automation control",
+          "acceptance_criteria": [
+            "Accepts: customer_id, campaign_name, budget_micros, tier",
+            "Creates CampaignBudget via BudgetService",
+            "Creates Campaign with correct bidding strategy per tier mapping",
+            "Sets status to PAUSED for safety",
+            "Returns resource_name on success",
+            "Error handling for API exceptions"
+          ],
+          "research_references": [
+            "research_prompts_answers/02_api_setup.md:Section 2.1 (v22 Campaign Creation)",
+            "research_prompts_answers/06_strategy.md:Section 8.3 (Campaign Naming Convention)",
+            "research_summary.md:Section 2.1"
+          ],
+          "estimated_hours": 12,
+          "deliverables": ["src/tools/create_campaign_tool.py", "tests/test_create_campaign_tool.py"]
+        },
+        {
+          "id": "TASK-025",
+          "title": "Implement Policy Exception Handler",
+          "description": "Try-Catch-Exempt-Retry workflow for policy violations (US-BLOCKED-001)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-002", "TASK-024"],
+          "implementation_notes": "Implement Try-Catch-Exempt-Retry: 1) Catch GoogleAdsException, 2) Check policy_finding_error, 3) Extract policy_topic_entries, 4) Construct PolicyValidationParameter with ignorable_policy_topics, 5) Retry with exemption, 6) Escalate if fails",
+          "acceptance_criteria": [
+            "Decorator/wrapper for all mutation operations",
+            "Catches GoogleAdsException with error_code=policy_finding_error",
+            "Extracts policy_topic_entries",
+            "Constructs PolicyValidationParameter with ignorable_policy_topics",
+            "Retries operation with exemption parameter",
+            "Escalates to human if retry fails (logs alert)"
+          ],
+          "research_references": [
+            "research_prompts_answers/02_api_setup.md:Section 2.3 (Policy Violation Detection)",
+            "research_summary.md:Section 2.3"
+          ],
+          "estimated_hours": 10,
+          "deliverables": ["src/utils/policy_handler.py", "tests/test_policy_handler.py"]
+        },
+        {
+          "id": "TASK-026",
+          "title": "Conditional: Implement Text-Only Upsell Script Generator",
+          "description": "Generate backend upsell messaging (US-004) - Text deliverable only",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-005", "TASK-020"],
+          "implementation_notes": "DECISION-001: TEXT-ONLY confirmed. Generate monetization_model-specific scripts: Education→Webinar transition, SaaS→Demo booking, Service→Consultation value stack. Output as text file, not injected into ads",
+          "acceptance_criteria": [
+            "ONLY if TASK-005 decision = Text-only",
+            "Prompt template per monetization_model",
+            "Education: Webinar transition script",
+            "SaaS: Demo booking nudge",
+            "Service: Consultation value stack",
+            "Output as text file, not injected into ads"
+          ],
+          "research_references": [
+            "prd.md:34-38"
+          ],
+          "estimated_hours": 6,
+          "deliverables": ["src/generators/upsell_script_generator.py", "prompts/upsell_scripts.yaml"],
+          "conditional": "Depends on TASK-005 outcome"
+        },
+        {
+          "id": "TASK-027",
+          "title": "Implement Shared Negative Keyword Sets",
+          "description": "Create and manage campaign-level negative keyword lists",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Use SharedSetService for universal negatives (free, cheap, crack, job, etc.), CampaignCriterionService for campaign-level. LLM generates 10+ vertical-specific negatives. Implement funnel sculpting (Tier 1 keywords negative in Tier 2/3)",
+          "acceptance_criteria": [
+            "Uses CampaignCriterionService for negative keywords",
+            "Creates SharedSetService for universal negatives",
+            "Applies universal list to all campaigns",
+            "LLM generates vertical-specific negatives (10+)",
+            "Funnel sculpting: Tier 1 keywords negative in Tier 2/3"
+          ],
+          "research_references": [
+            "research_prompts_answers/03_campaigns.md:Section 3.4 (Negative Keyword Shared Sets)",
+            "research_summary.md:Section 3.4"
+          ],
+          "estimated_hours": 8,
+          "deliverables": ["src/tools/negative_keywords_tool.py", "tests/test_negative_keywords.py"]
+        },
+        {
+          "id": "TASK-028",
+          "title": "Implement Campaign Setup Workflow with User Approval",
+          "description": "Day 0 workflow with permission gates (US-007)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020", "TASK-024"],
+          "implementation_notes": "DECISION-002: CLI-ONLY approval workflow. Use typer/click for CLI framework, rich for beautiful terminal output, inquirer/questionary for interactive prompts. [A]pprove/[E]dit/[R]eject/[Q]uit pattern",
+          "acceptance_criteria": [
+            "Workflow: Generate -> Display -> Ask Approval -> Execute",
+            "Uses ClaudeSDKClient permission_mode='ask' for create_campaign tool",
+            "User sees: Keywords, Negatives, Ad copy before submission",
+            "User can: approve | edit | reject",
+            "On reject: Loop back to generation with user feedback"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.2 (CLI-Only Approval Workflow)",
+            "research_summary.md:Section 8.2"
+          ],
+          "estimated_hours": 10,
+          "deliverables": ["src/workflows/setup_workflow.py", "tests/test_setup_workflow.py"]
+        }
+      ]
+    },
+    {
+      "id": "phase_3",
+      "name": "Phase 3: Optimization & Monitoring (Unlock 30%)",
+      "description": "Automated performance monitoring and campaign optimization",
+      "priority": "MEDIUM",
+      "status": "NOT_STARTED",
+      "estimated_duration": "2-3 weeks",
+      "milestone": "M3",
+      "dependencies": ["phase_2"],
+      "exit_criteria": [
+        "Golden Ratio scaling validated in test environment",
+        "Daily monitoring running autonomously for 7+ days",
+        "Optimization decisions documented and verifiable",
+        "Performance metrics dashboard operational"
+      ],
+      "tasks": [
+        {
+          "id": "TASK-030",
+          "title": "Implement Conversion Tracking Setup Helper",
+          "description": "Guide user through conversion action setup (prerequisite for US-009)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Query ConversionActionService to validate tracking is active. Provide setup instructions if none found (out-of-API-scope, requires website changes)",
+          "acceptance_criteria": [
+            "Tool queries existing conversion actions",
+            "If none found: Provides setup instructions (out-of-API-scope)",
+            "If found: Validates tracking is working (impressions > 0)",
+            "Returns conversion_action resource_name for reporting"
+          ],
+          "research_references": [
+            "google-ads-claude-code.md:303"
+          ],
+          "estimated_hours": 6,
+          "deliverables": ["src/tools/conversion_setup_tool.py"],
+          "notes": "Actual tracking setup requires website changes, out of scope"
+        },
+        {
+          "id": "TASK-031",
+          "title": "Implement Daily CTR Monitor (Revised Real-Time -> Daily)",
+          "description": "Days 1-14 performance check with statistical thresholds (US-008 revised)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P1",
+          "depends_on": ["TASK-020", "TASK-021"],
+          "implementation_notes": "Daily session pattern (not single 7-day session). Use always-on container with internal scheduler. CTR < 1% with impressions > 100 triggers ad pause and new generation request",
+          "acceptance_criteria": [
+            "GAQL query: SELECT ad_group_ad.ad.id, metrics.ctr, metrics.impressions WHERE impressions > 100",
+            "Runs once per day (not real-time)",
+            "CTR threshold: 1%",
+            "If CTR < 1%: Pause ad via AdService.mutate",
+            "Trigger new ad generation from TASK-023"
+          ],
+          "research_references": [
+            "research_prompts_answers/01_agent_sdk.md:Section 1.3 (Daily Session Pattern)",
+            "research_prompts_answers/05_production.md:Section 2.2 (Always-On with Internal Scheduler)",
+            "research_summary.md:Section 1.3"
+          ],
+          "estimated_hours": 8,
+          "deliverables": ["src/monitoring/ctr_monitor.py", "tests/test_ctr_monitor.py"]
+        },
+        {
+          "id": "TASK-032",
+          "title": "Implement Golden Ratio Budget Scaler",
+          "description": "Replace static budget with Fibonacci scaling (replaces TASK-014)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P0",
+          "depends_on": ["TASK-003", "TASK-030"],
+          "implementation_notes": "Use Portfolio Bidding Strategies for data pooling (15 conversions shared across campaigns, not per campaign). Implement gradual scaling (<20% per day) to avoid learning phase reset. Shadow Ledger for ₹20k promo credit tracking",
+          "acceptance_criteria": [
+            "Calculates LTV:CAC from conversion data",
+            "Decision matrix implementation (Table 3 from research)",
+            "< 1.0: Pause campaign",
+            "3.0-3.9: Scale by 1.618",
+            "> 4.0: Scale by 2.618",
+            "Circuit breaker: Max daily budget enforcement",
+            "Tripwire model exception logic"
+          ],
+          "research_references": [
+            "research_prompts_answers/03_campaigns.md:Section 3.2 (Portfolio Bidding Strategies)",
+            "research_prompts_answers/03_campaigns.md:Section 3.3 (Learning Phase Constraints)",
+            "research_prompts_answers/06_strategy.md:Section 8.4 (Golden Ratio Circuit Breaker)",
+            "research_prompts_answers/06_strategy.md:Section 8.5 (Shadow Ledger)",
+            "research_summary.md:Section 3.2, 3.3"
+          ],
+          "estimated_hours": 12,
+          "deliverables": ["src/budget/golden_ratio_scaler.py", "tests/test_golden_ratio.py"]
+        },
+        {
+          "id": "TASK-033",
+          "title": "Implement Automated Optimization Logic (Days 15+)",
+          "description": "Pause losing personas, increase bids on winners (US-009 revised)",
+          "type": "development",
+          "status": "needs_spec",
+          "priority": "P1",
+          "depends_on": ["TASK-030", "TASK-006"],
+          "acceptance_criteria": [
+            "Define 'Losing Persona': cost_per_conversion > target_cpa OR conversions=0 AND spend>₹2000",
+            "Pause ad group via AdGroupService.mutate",
+            "Identify 'Winning Persona': cost_per_conversion < target_cpa AND conversions >= 5",
+            "Action depends on bidding strategy (TASK-006 mapping)",
+            "If Manual CPC: Increase keyword bids by 20%",
+            "If Maximize Clicks: Increase bid cap by 20%"
+          ],
+          "research_references": [
+            "prd.md:58-60"
+          ],
+          "estimated_hours": 10,
+          "deliverables": ["src/optimization/persona_optimizer.py", "tests/test_persona_optimizer.py"]
+        },
+        {
+          "id": "TASK-034",
+          "title": "Create Reporting Dashboard Query Builder",
+          "description": "GAQL query generator respecting segmentation constraints (REQ-4 revised)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Level 1 queries: Campaign/AdGroup metrics (no keyword segment). Level 2 queries: Keyword-specific (SEARCH only). Handle privacy thresholds (null data for small audiences). Group by Persona (ad_group) and Angle (ad)",
+          "acceptance_criteria": [
+            "Level 1 queries: Campaign/AdGroup metrics without keyword segment",
+            "Level 2 queries: Keyword-specific for SEARCH campaigns only",
+            "Avoids implicit filtering issue (research Section 6.1)",
+            "Returns data grouped by Persona (ad_group) and Angle (ad)",
+            "Handles privacy thresholds (null data for small audiences)"
+          ],
+          "research_references": [
+            "research_prompts_answers/02_api_setup.md:Section 2.4 (GAQL Query Optimization)",
+            "research_summary.md:Section 2.4"
+          ],
+          "estimated_hours": 8,
+          "deliverables": ["src/reporting/query_builder.py", "tests/test_query_builder.py"]
+        },
+        {
+          "id": "TASK-035",
+          "title": "Implement ₹20k Spend Monitor for Credit Unlock",
+          "description": "Track progress toward promotional threshold",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Shadow Ledger pattern: local tracking database (Google API doesn't expose promo credit progress). Pacing algorithm: Green (on track) / Yellow (20% behind, suggest budget increase) / Red (2× behind, miss risk alert)",
+          "acceptance_criteria": [
+            "Queries account-level spend daily",
+            "Calculates days remaining to hit ₹20k in 60-day window",
+            "If underpacing: Recommends bid cap increase or geo expansion",
+            "Alerts user at milestones: ₹5k, ₹10k, ₹15k, ₹20k",
+            "Confirms credit application upon reaching threshold"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.5 (Shadow Ledger for ₹20k Promo Credit)",
+            "research_summary.md:Section 8.5"
+          ],
+          "estimated_hours": 6,
+          "deliverables": ["src/monitoring/spend_monitor.py"]
+        }
+      ]
+    },
+    {
+      "id": "phase_4",
+      "name": "Phase 4: Advanced Features (Enterprise)",
+      "description": "Advanced automation and scaling features",
+      "priority": "LOW",
+      "status": "NOT_STARTED",
+      "estimated_duration": "3-4 weeks",
+      "milestone": "M4",
+      "dependencies": ["phase_3"],
+      "exit_criteria": [
+        "Multi-agent orchestration successfully tested",
+        "Advanced features documented with examples",
+        "Performance benchmarks meet enterprise standards",
+        "Production deployment guide completed"
+      ],
+      "tasks": [
+        {
+          "id": "TASK-040",
+          "title": "Implement Custom Audience Creation",
+          "description": "CustomAudienceService integration (US-BLOCKED-002)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Google mandates AUTO type for new Custom Audiences (no explicit INTEREST or PURCHASE_INTENT). Implement URL + Keyword layering. Use as 'Observation' layer with bid adjustments for Search campaigns",
+          "acceptance_criteria": [
+            "CustomAudienceMember construction: KEYWORD, URL, APP types",
+            "Set type to AUTO for dynamic interpretation",
+            "Link via AdGroupCriterionService",
+            "Integration with persona generator (use top 5 keywords, top 3 URLs)"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.7 (Custom Audiences)",
+            "research_summary.md:Section 8.7"
+          ],
+          "estimated_hours": 12,
+          "deliverables": ["src/tools/custom_audience_tool.py"]
+        },
+        {
+          "id": "TASK-041",
+          "title": "Implement Keyword Forecasting",
+          "description": "Pre-launch performance prediction (US-BLOCKED-003)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P2",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Use KeywordPlanIdeaService for bid landscape simulator. Test 5 different bid levels, find point of diminishing returns. Forecast accuracy: High for head terms, Low for long tail, 30-day horizon",
+          "acceptance_criteria": [
+            "Uses KeywordPlanIdeaService.GenerateKeywordForecastMetrics",
+            "Constructs CampaignToForecast simulation object",
+            "Includes geo_modifiers, language_constants, bidding_strategy",
+            "Returns: impressions, clicks, cost_micros estimates",
+            "Iterative simulation: Test 5 different bid levels, find optimal"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.8 (Keyword Forecasting & Bid Simulator)",
+            "research_summary.md:Section 8.8"
+          ],
+          "estimated_hours": 16,
+          "deliverables": ["src/tools/forecast_tool.py", "tests/test_forecast.py"]
+        },
+        {
+          "id": "TASK-042",
+          "title": "Conditional: Implement Visual Asset Pipeline",
+          "description": "AssetService for image uploads (US-BLOCKED-004)",
+          "type": "development",
+          "status": "deferred",
+          "priority": "P3",
+          "depends_on": ["TASK-005"],
+          "decision_made": "DEFERRED to Phase 4",
+          "implementation_notes": "DECISION-001: TEXT-ONLY for Phase 1-3. Visual asset generation deferred to Phase 4 as paid add-on feature. Phase 2 will use free Unsplash/Pexels stock API, Phase 3 will support user uploads (S3)",
+          "acceptance_criteria": [
+            "DEFERRED: Visual asset generation moved to Phase 4",
+            "Phase 2 alternative: Unsplash/Pexels stock integration",
+            "Phase 3 alternative: User upload support (S3/Cloud Storage)",
+            "Phase 4: GenAI Studio with DALL-E 3 (paid add-on)"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 2 (Asset Generation Scope - TEXT-ONLY)",
+            "research_summary.md:Section 8.1 (DECISION-001)"
+          ],
+          "estimated_hours": 20,
+          "deliverables": ["src/tools/asset_upload_tool.py"],
+          "conditional": "Depends on TASK-005 outcome"
+        },
+        {
+          "id": "TASK-043",
+          "title": "Implement Session Forking for Parallel Strategy Testing",
+          "description": "Advanced SDK feature for A/B/C testing (US-BLOCKED-006)",
+          "type": "development",
+          "status": "ready",
+          "priority": "P3",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Use fork_session to create Strategy Engine. Fork 3 parallel threads (Volume-Max, Efficiency-Max, Competitor-Attack). Use prompt caching for cost optimization (up to 90% cheaper). Unique competitive differentiator",
+          "acceptance_criteria": [
+            "Uses ClaudeAgentOptions with resume and fork_session=True",
+            "Parent session generates 3 strategy hypotheses",
+            "Forks 3 child sessions to test each",
+            "Runs in parallel (async execution)",
+            "Convergence logic: Pick winning strategy based on forecast results",
+            "Merge winning branch back to main timeline"
+          ],
+          "research_references": [
+            "research_prompts_answers/06_strategy.md:Section 8.6 (Session Forking - Parallel Strategy Simulation)",
+            "research_summary.md:Section 8.6"
+          ],
+          "estimated_hours": 16,
+          "deliverables": ["src/orchestration/session_forker.py"]
+        },
+        {
+          "id": "TASK-044",
+          "title": "Implement Planner-Worker-Evaluator Architecture",
+          "description": "Multi-agent orchestration for complex campaigns",
+          "type": "development",
+          "status": "ready",
+          "priority": "P3",
+          "depends_on": ["TASK-020"],
+          "implementation_notes": "Planner (Sonnet for complex reasoning), Worker (Haiku for cost efficiency), Evaluator (verifies output). Auto-retry on FAIL with corrections. Define JSON plan schema",
+          "acceptance_criteria": [
+            "Planner agent: Decomposes request into steps (Sonnet model)",
+            "Worker agent: Executes steps (Haiku model for cost efficiency)",
+            "Evaluator agent: Verifies output against requirements",
+            "Auto-retry on FAIL verdict with worker corrections",
+            "JSON plan schema definition"
+          ],
+          "research_references": [
+            "claude-agents-sdk-1.md:Section 6.2"
+          ],
+          "estimated_hours": 20,
+          "deliverables": ["src/orchestration/multi_agent.py"]
+        },
+        {
+          "id": "TASK-045",
+          "title": "Implement Advanced Reporting with BigQuery Export",
+          "description": "Cloud-native data pipeline integration",
+          "type": "development",
+          "status": "ready",
+          "priority": "P3",
+          "depends_on": ["TASK-034"],
+          "implementation_notes": "Export to BigQuery dataset. Schema: campaigns, ad_groups, keywords, search_terms tables. Scheduled daily export via Cloud Function. Data Studio dashboard template",
+          "acceptance_criteria": [
+            "Exports campaign metrics to BigQuery dataset",
+            "Schema: campaigns, ad_groups, keywords, search_terms tables",
+            "Scheduled daily export via Cloud Function",
+            "SQL queries for persona performance analysis",
+            "Data Studio dashboard template"
+          ],
+          "research_references": [
+            "google-ads-2-claude-agent.md:Section 2.4"
+          ],
+          "estimated_hours": 16,
+          "deliverables": ["src/integrations/bigquery_exporter.py", "dashboards/template.json"]
+        }
+      ]
+    }
+  ],
+  "dependencies_graph": {
+    "description": "Critical path visualization",
+    "blocking_tasks": [
+      "TASK-000",
+      "TASK-001",
+      "TASK-002",
+      "TASK-020"
+    ],
+    "can_parallelize": [
+      ["TASK-010", "TASK-012", "TASK-015", "TASK-016"],
+      ["TASK-022", "TASK-023", "TASK-027"]
+    ]
+  },
+  "risk_assessment": {
+    "high_risk_tasks": [
+      {
+        "task_id": "TASK-005",
+        "risk": "Stakeholder decision delay",
+        "mitigation": "Schedule decision meeting in Phase 0, provide cost/benefit analysis"
+      },
+      {
+        "task_id": "TASK-025",
+        "risk": "Policy API behavior unpredictable, false positives common",
+        "mitigation": "Implement comprehensive logging, human escalation path, test with known policy violations"
+      },
+      {
+        "task_id": "TASK-032",
+        "risk": "Complex algorithm, needs extensive testing across scenarios",
+        "mitigation": "Create test suite with LTV:CAC edge cases, validate against research examples"
+      }
+    ],
+    "external_dependencies": [
+      {
+        "dependency": "Google Ads API v22+ stability",
+        "risk_level": "MEDIUM",
+        "notes": "API deprecations happen regularly, monitor release notes"
+      },
+      {
+        "dependency": "Claude Agent SDK maturity",
+        "risk_level": "MEDIUM",
+        "notes": "SDK is actively evolving, may require updates"
+      }
+    ]
+  },
+  "success_metrics": {
+    "phase_1": {
+      "code_coverage": ">=80%",
+      "tests_passing": "100%",
+      "can_validate_config": true
+    },
+    "phase_2": {
+      "agent_can_create_campaign": true,
+      "policy_exceptions_handled": true,
+      "persona_generation_accuracy": "User validated"
+    },
+    "phase_3": {
+      "daily_monitoring_active": true,
+      "golden_ratio_scaling_tested": true,
+      "spend_20k_in_60days": true
+    },
+    "phase_4": {
+      "forecasting_accuracy": "Within 20% of actuals",
+      "multi_agent_orchestration": true
+    }
+  },
+  "research_completion": {
+    "status": "COMPLETE",
+    "completion_date": "2025-12-27",
+    "total_questions": 35,
+    "answered": 35,
+    "prompts_completed": [
+      "Prompt 1: Claude Agent SDK (RQ-001 to RQ-007)",
+      "Prompt 2: Google Ads API Setup (RQ-008 to RQ-011)",
+      "Prompt 3: Campaign APIs (RQ-012 to RQ-015)",
+      "Prompt 4: AI Generation (RQ-018 to RQ-023)",
+      "Prompt 5: Production System Design (RQ-024 to RQ-030)",
+      "Prompt 6: Product Strategy (RQ-006, RQ-016-017, RQ-031-035)"
+    ],
+    "critical_decisions": {
+      "DECISION-001": {
+        "title": "Asset Generation Scope",
+        "decision": "TEXT-ONLY for Phase 1-3",
+        "rationale": "Focus on Search Network primacy, avoid high GenAI image costs ($0.08/image), defer visual to Phase 4 as paid add-on",
+        "phase_roadmap": "Phase 1: Text-only → Phase 2: Stock integration (Unsplash/Pexels) → Phase 3: User uploads (S3) → Phase 4: GenAI Studio (DALL-E 3)",
+        "impact": "TASK-005 ready, TASK-026 ready, TASK-042 deferred, 30% reduction in backend complexity"
+      },
+      "DECISION-002": {
+        "title": "User Approval Workflow UX",
+        "decision": "CLI-ONLY",
+        "rationale": "Simpler architecture (30-40% faster development), no web framework needed, scriptable/automatable, perfect for power users",
+        "tech_stack": "typer/click (CLI framework), rich (terminal output), inquirer/questionary (interactive prompts)",
+        "impact": "TASK-028 ready, removes web framework and Slack API from scope"
+      },
+      "DECISION-003": {
+        "title": "Deployment Architecture",
+        "decision": "Containerized VM (Docker on EC2/GCE)",
+        "rationale": "Stateful agent requires persistent storage, long-running processes (incompatible with serverless 15-min limits), cost-effective for always-on workload",
+        "vm_specs": "t3.medium (2 vCPU, 4GB RAM), Ubuntu 22.04 LTS, EBS/Persistent Disk volumes",
+        "pattern": "Always-on container with internal scheduler (not Cron), hourly circuit breaker watchdog"
+      }
+    },
+    "architectural_patterns": {
+      "agent_sdk": {
+        "mcp_server": "In-process (not subprocess) for shared OAuth state",
+        "session_management": "Daily session pattern (not single 7-day session)",
+        "persistence": "Sidecar pattern (external DB for event logging)",
+        "permission_system": "Custom can_use_tool with 3-tier safety (Auto-Deny/Auto-Allow/Ask-Human)"
+      },
+      "google_ads_api": {
+        "version": "v22 (skip v15-v21)",
+        "oauth_refresh": "Proactive refresh every 6 days (7-day expiration phenomenon)",
+        "policy_compliance": "validate_only=True pre-flight + Try-Catch-Exempt-Retry",
+        "gaql_queries": "Use official google-ads-mcp for read-only operations"
+      },
+      "campaign_management": {
+        "bidding": "Portfolio Bidding Strategies for data pooling",
+        "budget_scaling": "Golden Ratio (1.618/2.618) with ₹2,000/day circuit breaker (1.2x safety margin)",
+        "naming_convention": "{Status}_{Vertical}_{Offer}_{Geo}_{Network}_{MatchType}_{Date}",
+        "negative_keywords": "SharedSetService for universal list + LLM-generated vertical-specific"
+      },
+      "ai_generation": {
+        "prompt_storage": "YAML files in prompts/ directory",
+        "variable_injection": "Jinja2 templating",
+        "output_validation": "Pydantic schemas",
+        "ad_copy_strategy": "Polarity testing (Urgency vs Value)",
+        "system_prompts": "Multi-mode (Setup: creative, Monitoring: conservative)"
+      },
+      "advanced_features": {
+        "session_forking": "fork_session for parallel strategy simulation (Strategy Engine differentiator)",
+        "shadow_ledger": "Local DB tracking ₹20k promo credit progress (Google API doesn't expose)",
+        "custom_audiences": "AUTO type mandated by Google (URL + Keyword layering)"
+      }
+    },
+    "key_findings": {
+      "security": [
+        "Custom can_use_tool callback required (default 'ask' is CLI-only)",
+        "3-tier permission: Auto-Deny (destructive ops), Auto-Allow (read-only), Ask-Human (budget changes)"
+      ],
+      "performance": [
+        "Portfolio Bidding: 15 conversions shared across all campaigns (faster learning)",
+        "Gradual scaling <20% per day avoids learning phase reset",
+        "Prompt caching in session forking: up to 90% cost savings"
+      ],
+      "constraints": [
+        "Google Ads API v22 breaking changes: AssetGenerationService (beta), Targetless optimization, ProductLink (replaces AccountLink)",
+        "Learning phase reset triggers: Budget change >20-30%, Target CPA/ROAS change >20%, Bidding strategy switch"
+      ]
+    },
+    "next_steps": [
+      "Update PRD with research findings (Section 3.4 SDK, Section 3.5 LLM, Section 3.6 UX, Section 3.7 Promo Credit)",
+      "Begin Phase 1 implementation (TASK-010 to TASK-016 all ready)",
+      "Phase 0 tasks (TASK-000 to TASK-007) ready for specification writing"
+    ]
+  }
+}
