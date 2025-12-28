@@ -167,26 +167,89 @@ Reporting must group data by "Persona" and "Angle" regardless of vertical:
 - **Token Storage**: Securely store refresh_token, auto-refresh access_token
 
 ### REQ-6: Policy Compliance Exception Handler
-Implement Try-Catch-Exempt-Retry algorithm for policy violations:
+The agent must implement a robust Try-Catch-Exempt-Retry algorithm to handle Google Ads policy violations gracefully. This prevents campaign creation failures due to common, non-critical policy flags.
 
-1. **Catch**: Wrap all mutation operations (create campaign, upload ad, etc.) in try-catch
-2. **Detect**: Check for `GoogleAdsException.error_code == policy_finding_error`
-3. **Extract**: Parse `policy_topic_entries` from exception
-4. **Exempt**: Construct `PolicyValidationParameter` with `ignorable_policy_topics`
-5. **Retry**: Re-submit mutation with exemption parameter
-6. **Escalate**: If retry fails, log detailed error and alert human operator
+#### 1. Pre-Flight Check with `validate_only=True`
+Before any mutation (creation or update of Ads, Keywords, etc.), the agent must perform a pre-flight check by first sending the request with the `validate_only` header set to `True`. This allows for early detection of policy issues without committing the entity.
 
-**Example Flow**:
-```python
-try:
-    create_ad(customer_id, ad_copy)
-except GoogleAdsException as ex:
-    if ex.failure.errors[0].error_code.policy_finding_error:
-        policy_topics = extract_policy_topics(ex)
-        retry_with_exemption(customer_id, ad_copy, policy_topics)
-    else:
-        escalate_to_human(ex)
+#### 2. The Try-Catch-Exempt-Retry Workflow
+
+**Workflow Diagram (as Pseudocode):**
 ```
+function submit_google_ads_entity(entity_data):
+    // Step 1: Pre-flight check
+    pre_flight_response = google_ads_api.mutate(entity_data, validate_only=True)
+    if pre_flight_response.has_policy_violation_error():
+        policy_topics = extract_policy_topics(pre_flight_response.error)
+        exemption_parameter = construct_policy_exemption(policy_topics)
+        entity_data.add_parameter(exemption_parameter)
+
+    // Step 2: Try initial submission (or submission with exemption)
+    try:
+        final_response = google_ads_api.mutate(entity_data, validate_only=False)
+        return final_response
+    catch GoogleAdsException as ex:
+        // Step 3: Catch policy violations on the actual submission
+        if ex.has_policy_violation_error():
+            policy_topics = extract_policy_topics(ex)
+            exemption_parameter = construct_policy_exemption(policy_topics)
+            entity_data.add_parameter(exemption_parameter)
+
+            // Step 4: Retry submission with exemption
+            try:
+                retry_response = google_ads_api.mutate(entity_data, validate_only=False)
+                return retry_response
+            catch GoogleAdsException as retry_ex:
+                // Step 5: Escalate on persistent failure
+                escalate_to_human("Retry failed after exemption", retry_ex)
+                return None
+        else:
+            // Handle other non-policy errors
+            escalate_to_human("Non-policy API error", ex)
+            return None
+```
+
+#### 3. `PolicyValidationParameter` Construction
+When a `policy_finding_error` is detected, the agent must construct a `PolicyValidationParameter` object.
+
+- **`ignorable_policy_topics`**: This field is a list of resource names for the policy topics found in the error details. The resource names are extracted from the `policy_topic_entries` in the `GoogleAdsFailure` object.
+- **Example**: If an ad is flagged for "DESTINATION_NOT_WORKING", the `ignorable_policy_topics` list would contain the resource name associated with that policy topic.
+
+```python
+# Pseudocode for constructing the parameter
+from google.ads.googleads.v22.services.types import AdGroupAdService
+
+policy_validation_parameter = client.get_type("PolicyValidationParameter")
+for entry in policy_finding_details.policy_topic_entries:
+    policy_validation_parameter.ignorable_policy_topics.append(entry.topic)
+
+# This parameter is then attached to the mutate request
+request = AdGroupAdService.MutateAdGroupAdsRequest()
+request.operations[0].... # build your operation
+request.partial_failure = True
+request.policy_validation_parameter = policy_validation_parameter
+```
+
+#### 4. Human Escalation Triggers
+The agent must escalate to a human operator under the following conditions:
+
+1.  **Retry Failure**: The second submission attempt (with `PolicyValidationParameter`) fails with another `policy_finding_error`. This indicates a non-ignorable policy issue.
+2.  **Disapproved Status**: An entity is successfully created but is later found to have a status of `DISAPPROVED`. This requires manual review.
+3.  **Non-Policy API Errors**: Any `GoogleAdsException` that is *not* a `policy_finding_error` should be escalated, as it may indicate a deeper issue with the request or API.
+4.  **Sensitive Verticals**: If the campaign `vertical_type` is in a sensitive category (e.g., healthcare, finance), all policy violations should trigger an immediate human review, even if they are technically ignorable.
+
+#### 5. Common Policy Violations & Handling Strategies
+
+This table outlines how the agent should handle common, often ignorable, policy violations.
+
+| Policy Violation | Description | Agent Action |
+| :--- | :--- | :--- |
+| **DESTINATION_NOT_WORKING** | The landing page URL is unreachable or returns an error. | **Exempt & Retry**. Often a temporary issue. Escalate if retry fails. |
+| **TRADEMARKS_IN_AD_TEXT** | Use of a trademarked term in the ad copy. | **Exempt & Retry**. Allowed if the advertiser is a reseller or informational site. |
+| **EDITORIAL** (e.g., punctuation) | Minor grammatical or formatting issues. | **Exempt & Retry**. Usually safe to ignore. |
+| **POTENTIALLY_SENSITIVE_CONTENT** | The ad content may be sensitive for some audiences. | **Exempt & Retry**. Common for many verticals. |
+| **DANGEROUS_PRODUCTS_OR_SERVICES** | (e.g., weapons, drugs) | **DO NOT EXEMPT**. Immediate escalation required. This should be caught by pre-check logic. |
+| **MISLEADING_CONTENT** | (e.g., "guaranteed results") | **DO NOT EXEMPT**. The agent's ad generation logic (REQ-8) should prevent this. Escalate if it occurs. |
 
 ## Intelligence Layer Requirements
 
