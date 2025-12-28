@@ -1,7 +1,5 @@
 import logging
-import os
 from google.ads.googleads.client import GoogleAdsClient
-from google.ads.googleads.errors import GoogleAdsException
 
 # Configure logging
 logging.basicConfig(
