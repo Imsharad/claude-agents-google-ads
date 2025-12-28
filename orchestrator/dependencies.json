@@ -1,0 +1,84 @@
+{
+  "description": "Task dependency graph extracted from tasks.json",
+  "tasks": {
+    "TASK-000": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-001", "TASK-002", "TASK-003", "TASK-020"]
+    },
+    "TASK-001": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-010", "TASK-011", "TASK-012"]
+    },
+    "TASK-002": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-025"]
+    },
+    "TASK-003": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-014"]
+    },
+    "TASK-004": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-020", "TASK-021"]
+    },
+    "TASK-005": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-026"]
+    },
+    "TASK-006": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-013"]
+    },
+    "TASK-007": {
+      "phase": 0,
+      "depends_on": [],
+      "blocks": ["TASK-022", "TASK-023"]
+    },
+    "TASK-010": {
+      "phase": 1,
+      "depends_on": [],
+      "blocks": ["TASK-011"]
+    },
+    "TASK-011": {
+      "phase": 1,
+      "depends_on": ["TASK-001", "TASK-010"],
+      "blocks": ["TASK-012"]
+    },
+    "TASK-012": {
+      "phase": 1,
+      "depends_on": ["TASK-011"],
+      "blocks": ["TASK-013", "TASK-014", "TASK-015"]
+    },
+    "TASK-013": {
+      "phase": 1,
+      "depends_on": ["TASK-012"],
+      "blocks": []
+    },
+    "TASK-014": {
+      "phase": 1,
+      "depends_on": ["TASK-012"],
+      "blocks": []
+    },
+    "TASK-015": {
+      "phase": 1,
+      "depends_on": ["TASK-012"],
+      "blocks": []
+    },
+    "TASK-016": {
+      "phase": 1,
+      "depends_on": [],
+      "blocks": []
+    }
+  },
+  "phase_gates": {
+    "phase_0_complete": ["TASK-000", "TASK-001", "TASK-002", "TASK-003", "TASK-004", "TASK-005", "TASK-006", "TASK-007"],
+    "phase_1_complete": ["TASK-010", "TASK-011", "TASK-012", "TASK-013", "TASK-014", "TASK-015", "TASK-016"]
+  }
+}

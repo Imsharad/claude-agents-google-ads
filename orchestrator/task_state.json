@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-12-29T00:15:00Z",
+  "max_parallel_tasks": 5,
+  "active_sessions": 5,
+  "tasks": {
+    "TASK-000": {
+      "status": "in_progress",
+      "session_id": "sessions/13535533309531173281",
+      "pr_url": null,
+      "started_at": "2025-12-29T00:15:00Z"
+    },
+    "TASK-001": {
+      "status": "in_progress",
+      "session_id": "sessions/16019360090854142714",
+      "pr_url": null,
+      "started_at": "2025-12-29T00:15:00Z"
+    },
+    "TASK-002": {"status": "pending", "session_id": null, "pr_url": null},
+    "TASK-003": {"status": "pending", "session_id": null, "pr_url": null},
+    "TASK-004": {
+      "status": "in_progress",
+      "session_id": "sessions/14129617969833698085",
+      "pr_url": null,
+      "started_at": "2025-12-29T00:15:00Z"
+    },
+    "TASK-005": {"status": "pending", "session_id": null, "pr_url": null},
+    "TASK-006": {"status": "pending", "session_id": null, "pr_url": null},
+    "TASK-007": {"status": "pending", "session_id": null, "pr_url": null},
+    "TASK-010": {
+      "status": "in_progress",
+      "session_id": "sessions/16721566770188284192",
+      "pr_url": null,
+      "started_at": "2025-12-29T00:10:00Z"
+    },
+    "TASK-011": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-001", "TASK-010"]},
+    "TASK-012": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-011"]},
+    "TASK-013": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
+    "TASK-014": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
+    "TASK-015": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
+    "TASK-016": {
+      "status": "in_progress",
+      "session_id": "sessions/13756300551230697280",
+      "pr_url": null,
+      "started_at": "2025-12-29T00:10:00Z"
+    }
+  },
+  "session_index": {
+    "sessions/13535533309531173281": "TASK-000",
+    "sessions/16019360090854142714": "TASK-001",
+    "sessions/14129617969833698085": "TASK-004",
+    "sessions/16721566770188284192": "TASK-010",
+    "sessions/13756300551230697280": "TASK-016"
+  }
+}

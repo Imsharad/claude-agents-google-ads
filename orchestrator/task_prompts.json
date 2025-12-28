@@ -1,0 +1,62 @@
+{
+  "TASK-000": {
+    "title": "TASK-000: Update PRD with Claude Agent SDK Architecture Section",
+    "prompt": "TASK-000: Update PRD with Claude Agent SDK Architecture Section\n\n## Objective\nAdd Section 3.4 to prd.md documenting ClaudeSDKClient initialization, MCP server setup, and tool registration pattern.\n\n## Acceptance Criteria\n1. Section 3.4 added to PRD with subsections:\n   - 3.4.1 SDK Initialization\n   - 3.4.2 MCP Server Setup\n   - 3.4.3 Tool Registration Pattern\n2. ClaudeAgentOptions configuration documented with: model selection, max_turns, system_prompt, custom_tools\n3. MCP server pattern specified including: server lifecycle, tool discovery, error handling\n4. System prompt structure defined with: role definition, capability boundaries, example interactions\n5. Code examples provided for: basic initialization, tool registration, error handling\n\n## Research References\n- research_prompts_answers/01_agent_sdk.md (Sections 1.2, 1.3, 1.4)\n- research_summary.md Section 1\n\n## Implementation Notes\n- Use in-process MCP server pattern (not subprocess)\n- Daily session pattern (not 7-day)\n- Sidecar persistence for event logging\n\n## Deliverables\n- Updated prd.md with Section 3.4"
+  },
+  "TASK-001": {
+    "title": "TASK-001: Define Google Ads API Version and Authentication",
+    "prompt": "TASK-001: Define Google Ads API Version and Authentication Requirements\n\n## Objective\nAdd REQ-5 to prd.md specifying API v22+, google-ads.yaml configuration, and proto_plus settings.\n\n## Acceptance Criteria\n1. REQ-5 added to Section 6 of prd.md\n2. API version specified as v22 or higher\n3. google-ads.yaml schema documented\n4. Authentication flow (Installed App vs Service Account) chosen and documented\n\n## Research References\n- research_prompts_answers/02_api_setup.md (Sections 2.1, 2.2)\n- research_summary.md Section 2\n\n## Implementation Notes\n- Target API v22 directly (skip v15-v21)\n- Implement proactive OAuth refresh every 6 days (7-day expiration phenomenon)\n\n## Deliverables\n- Updated prd.md with REQ-5"
+  },
+  "TASK-002": {
+    "title": "TASK-002: Design Policy Compliance Exception Handler",
+    "prompt": "TASK-002: Design Policy Compliance Exception Handler\n\n## Objective\nAdd REQ-6 to prd.md specifying Try-Catch-Exempt-Retry algorithm for policy violations.\n\n## Acceptance Criteria\n1. REQ-6 added to Section 6 of prd.md\n2. Exception handling workflow documented\n3. PolicyValidationParameter construction specified\n4. Human escalation trigger conditions defined\n\n## Research References\n- google-ads-2-claude-agent.md Section 5.2, Table 3\n\n## Implementation Notes\n- Use validate_only=True for pre-flight policy checks\n- Implement Try-Catch-Exempt-Retry pattern with PolicyValidationParameter\n\n## Deliverables\n- Updated prd.md with REQ-6 and policy handling specification"
+  },
+  "TASK-003": {
+    "title": "TASK-003: Replace Static Budget Formula with Golden Ratio Algorithm",
+    "prompt": "TASK-003: Replace Static Budget Formula with Golden Ratio Algorithm\n\n## Objective\nUpdate Section 3.3.1 of prd.md to implement Fibonacci scaling and LTV:CAC decision matrix.\n\n## Acceptance Criteria\n1. Golden Ratio formula documented: Next = Current × 1.618\n2. LTV:CAC thresholds defined (<1.0, 1.0-2.9, 3.0-3.9, >4.0)\n3. Circuit breaker logic specified (max daily spend ₹2,000/day with 1.2x safety margin)\n4. Tripwire model exception documented\n\n## Research References\n- research_prompts_answers/03_campaigns.md Section 3.2 (Portfolio Bidding)\n- research_prompts_answers/06_strategy.md Section 8.4 (Golden Ratio Circuit Breaker)\n- research_summary.md Section 3.2\n\n## Implementation Notes\n- ₹2,000/day hard cap with 1.2x safety margin (₹2,400 trigger)\n- Hourly watchdog cron job\n- Tripwire_Exempt label for exceptions\n- Use Portfolio Bidding Strategies for data pooling\n\n## Deliverables\n- Updated prd.md Section 3.3.1 with Golden Ratio algorithm"
+  },
+  "TASK-004": {
+    "title": "TASK-004: Define Gather-Action-Verify Agent Loop",
+    "prompt": "TASK-004: Define Gather-Action-Verify Agent Loop\n\n## Objective\nDocument recursive reasoning loop pattern for campaign operations in prd.md.\n\n## Acceptance Criteria\n1. Loop phases documented: Gather, Action, Verify\n2. Verification requirements per action type specified\n3. Error recovery sub-loop defined\n4. Max iteration limits specified\n\n## Research References\n- research_prompts_answers/06_strategy.md Section 8.6 (Session Forking)\n- research_summary.md Section 8.6\n\n## Implementation Notes\n- Use Session Forking for parallel strategy simulation\n- Implement fork_session to create Strategy Engine\n- Use prompt caching for cost optimization\n\n## Deliverables\n- Updated prd.md with Gather-Action-Verify loop specification"
+  },
+  "TASK-005": {
+    "title": "TASK-005: Clarify Asset Generation Scope",
+    "prompt": "TASK-005: Clarify Asset Generation Scope (Text vs Visual)\n\n## Objective\nDocument architectural decision on asset generation scope in prd.md.\n\n## Decision Made\nTEXT-ONLY for Phase 1-3. Visual assets deferred to Phase 4.\n\n## Acceptance Criteria\n1. Decision documented in PRD\n2. Update Section 3.2.2 to remove visual references for Phase 1-3\n3. Add Phase 4 roadmap for visual assets\n4. User story US-004 scope clarified\n\n## Implementation Notes\n- Phase 2 will use Unsplash/Pexels stock integration (free)\n- Schema: AdObject = { headlines:[], descriptions:[], paths:[] }\n\n## Deliverables\n- Updated prd.md with DECISION-001: Text-only scope"
+  },
+  "TASK-006": {
+    "title": "TASK-006: Map Monetization Models to Bidding Strategies",
+    "prompt": "TASK-006: Map Monetization Models to Bidding Strategies\n\n## Objective\nResolve bidding strategy contradiction by aligning bidding logic with Growth-Tier Protocol.\n\n## Acceptance Criteria\n1. Update REQ-3 in prd.md with strategy mapping:\n   - TRIPWIRE_UPSELL -> Maximize Conversions (Target CPA)\n   - DIRECT_SALE -> Target ROAS\n   - LEAD_GEN -> Maximize Clicks with cap\n   - BOOK_CALL -> Maximize Conversions\n2. Document warm-up strategy (no target until 15+ conversions)\n\n## Research References\n- research_prompts_answers/03_campaigns.md Section 3.1 (Bidding Strategy Mapping)\n- research_summary.md Section 3.1\n\n## Implementation Notes\n- SaaS Trial → Target CPA (MAXIMIZE_CONVERSIONS + target_cpa_micros)\n- E-commerce → Target ROAS\n- Lead Gen → Max Clicks + CPC Cap\n- Brand → Max Impressions\n\n## Deliverables\n- Updated prd.md REQ-3 with bidding strategy mapping"
+  },
+  "TASK-007": {
+    "title": "TASK-007: Define LLM Prompt Template Architecture",
+    "prompt": "TASK-007: Define LLM Prompt Template Architecture\n\n## Objective\nSpecify how variable injection works for different verticals (REQ-2 clarification) in prd.md.\n\n## Acceptance Criteria\n1. Prompt storage format defined (YAML with Jinja2)\n2. Variable placeholders documented: {vertical_type}, {offer_name}, etc.\n3. Template switching mechanism specified\n4. Example prompts for all 3 use cases provided\n\n## Research References\n- research_prompts_answers/04_ai_generation.md Section 4.1 (YAML + Jinja2)\n- research_prompts_answers/04_ai_generation.md Section 4.2 (Pydantic Validation)\n- research_prompts_answers/01_agent_sdk.md Section 1.5 (System Prompt Engineering)\n- research_summary.md Section 4\n\n## Implementation Notes\n- Use YAML for storage (native multi-line support)\n- Jinja2 for injection (logic support, safe variable injection)\n- Pydantic for output validation\n- Multi-mode prompting: Setup Mode (creative) vs Monitoring Mode (conservative)\n\n## Deliverables\n- Updated prd.md with prompt template architecture\n- Example prompts/ directory structure"
+  },
+  "TASK-010": {
+    "title": "TASK-010: Setup Python Environment",
+    "prompt": "Already launched - Session: sessions/16721566770188284192"
+  },
+  "TASK-011": {
+    "title": "TASK-011: Configure Google Ads API Authentication",
+    "prompt": "TASK-011: Configure Google Ads API Authentication\n\n## Objective\nCreate google-ads.yaml configuration template and test connection.\n\n## Dependencies\n- TASK-001 (API version spec) - must be completed\n- TASK-010 (Python environment) - must be completed\n\n## Acceptance Criteria\n1. google-ads.yaml.example created with structure from research\n2. OAuth2 flow documentation added to README\n3. Create src/config/google_ads_client.py with GoogleAdsClient.load_from_storage()\n4. Add connection test script: scripts/test_connection.py\n5. Successfully query customer account details (in test)\n\n## Security Notes\n- Add google-ads.yaml to .gitignore\n- Document setup in README\n\n## Deliverables\n- google-ads.yaml.example\n- src/config/google_ads_client.py\n- scripts/test_connection.py\n- Updated README.md"
+  },
+  "TASK-012": {
+    "title": "TASK-012: Implement Configuration Schema Validation",
+    "prompt": "TASK-012: Implement Configuration Schema Validation\n\n## Objective\nCreate Pydantic models for Campaign Configuration payload (US-001).\n\n## Dependencies\n- TASK-011 (Google Ads API auth) - must be completed\n\n## Acceptance Criteria\n1. Pydantic model: CampaignConfiguration with all fields from prd.md:16-21\n2. Enum for vertical_type (EDUCATION, SAAS, SERVICE, E-COMMERCE)\n3. Enum for monetization_model (TRIPWIRE_UPSELL, DIRECT_SALE, LEAD_GEN, BOOK_CALL)\n4. Validation rules: required fields, string length limits\n5. Unit tests for valid/invalid configs\n\n## Deliverables\n- src/models/configuration.py\n- src/models/enums.py\n- tests/test_configuration.py"
+  },
+  "TASK-013": {
+    "title": "TASK-013: Create Keyword Strategy Generator",
+    "prompt": "TASK-013: Create Keyword Strategy Generator\n\n## Objective\nImplement phrase match keyword generation with universal negatives (US-006).\n\n## Dependencies\n- TASK-012 (Configuration schema) - must be completed\n\n## Acceptance Criteria\n1. Function: generate_keywords(config: CampaignConfiguration) -> List[Keyword]\n2. Returns keywords with PHRASE match type\n3. Includes universal negative list: free, cheap, crack, job, etc.\n4. Seeds from offer_name and value_proposition\n5. Returns 10-30 keyword candidates\n\n## Deliverables\n- src/generators/keyword_generator.py\n- src/generators/negative_keywords.py\n- tests/test_keyword_generator.py"
+  },
+  "TASK-014": {
+    "title": "TASK-014: Implement Static Budget Calculator",
+    "prompt": "TASK-014: Implement Static Budget Calculator\n\n## Objective\nBasic budget allocation (₹20k/30 days) - will be replaced in Phase 2 with Golden Ratio.\n\n## Dependencies\n- TASK-012 (Configuration schema) - must be completed\n\n## Acceptance Criteria\n1. Function: calculate_daily_budget(total_budget: int, duration_days: int) -> int\n2. Returns daily budget in micros (for Google Ads API)\n3. Validates total_budget >= 10000 (₹10k minimum)\n4. Includes TODO comment referencing Golden Ratio upgrade (TASK-032)\n\n## Deliverables\n- src/budget/calculator.py\n- tests/test_budget_calculator.py\n\n## Note\nThis is a placeholder - will be replaced by TASK-032 Golden Ratio scaler in Phase 2"
+  },
+  "TASK-015": {
+    "title": "TASK-015: Create Example Configurations",
+    "prompt": "TASK-015: Create Example Configurations for 3 Verticals\n\n## Objective\nImplement documentation examples from prd.md Section 5 (US-010).\n\n## Dependencies\n- TASK-012 (Configuration schema) - must be completed\n\n## Acceptance Criteria\n1. examples/workshop_config.json (Education vertical)\n2. examples/dentist_config.json (Service vertical)\n3. examples/saas_config.json (SaaS vertical)\n4. Each passes CampaignConfiguration Pydantic validation\n5. README.md updated with usage examples\n\n## Deliverables\n- examples/workshop_config.json\n- examples/dentist_config.json\n- examples/saas_config.json\n- Updated README.md"
+  },
+  "TASK-016": {
+    "title": "TASK-016: Setup Testing Framework",
+    "prompt": "Already launched - Session: sessions/13756300551230697280"
+  }
+}
