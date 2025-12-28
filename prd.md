@@ -153,18 +153,41 @@ Reporting must group data by "Persona" and "Angle" regardless of vertical:
 ## API & Infrastructure Requirements
 
 ### REQ-5: Google Ads API Version & Authentication
-- **API Version**: v22 or higher (proto_plus mode required)
-- **Configuration File**: google-ads.yaml with structure:
+
+- **API Version**: The system must use Google Ads API **v22 or higher**. This is a hard requirement to avoid imminent deprecations of older versions (v16-v21) and to leverage the latest features, including the `AssetGenerationService` and "targetless" bidding strategies. The Python client must be initialized with `version="v22"` to prevent accidental fallback to older versions.
+
+- **Client Library Mode**: The Python client library must be configured with `use_proto_plus: True`. This enables a more Pythonic, readable, and less error-prone interface for interacting with API resources, which is critical for development velocity and maintainability in Phase 1.
+
+- **Authentication Flow**: The system will use the **OAuth 2.0 "Installed Application" (Desktop App) flow** for initial authentication. This method is chosen for its simplicity in a background service context, requiring a one-time manual authorization to generate a long-lived refresh token.
+
+- **`google-ads.yaml` Configuration Schema**: The core configuration will be stored in a `google-ads.yaml` file with the following structure. For production, these values should be injected as environment variables.
+
   ```yaml
-  developer_token: YOUR_DEV_TOKEN
-  client_id: YOUR_CLIENT_ID
-  client_secret: YOUR_CLIENT_SECRET
-  refresh_token: YOUR_REFRESH_TOKEN
-  login_customer_id: YOUR_MCC_ID (optional)
+  # google-ads.yaml
+  # Core Configuration for Google Ads API v22+
+
+  # 1. Developer Token: Identifies the application itself.
+  # Obtainable from the API Center in the Google Ads MCC.
+  developer_token: "INSERT_DEV_TOKEN"
+
+  # 2. OAuth2 Credentials: Identifies the GCP project and the authorized user.
+  # Generated from the GCP Console for a "Desktop App" OAuth client.
+  client_id: "INSERT_CLIENT_ID"
+  client_secret: "INSERT_CLIENT_SECRET"
+  refresh_token: "INSERT_REFRESH_TOKEN"
+
+  # 3. Client Behavior: Enforces modern, readable code patterns.
+  # Must be set to True for Phase 1.
   use_proto_plus: True
+
+  # 4. Login Context (for MCC): Specifies the manager account to operate under.
+  # This should be the MCC ID that has access to the client accounts.
+  login_customer_id: "INSERT_MCC_ACCOUNT_ID"
   ```
-- **Authentication Flow**: Installed Application flow (OAuth2) for initial setup
-- **Token Storage**: Securely store refresh_token, auto-refresh access_token
+
+- **OAuth Refresh Token Strategy**: To mitigate the "7-Day Expiration" phenomenon for apps in "Testing" mode and to prevent inactivity-based expiration (6 months), a **proactive refresh strategy** will be implemented. The system will make a lightweight, read-only API call (e.g., `CustomerService.list_accessible_customers()`) on a scheduled basis (e.g., every 6 days) to ensure the refresh token remains active.
+
+- **Security**: The OAuth Consent Screen in the GCP project must be set to **"In Production"** to prevent the strict 7-day token expiry. For internal use cases, setting the "User Type" to "Internal" is also sufficient. For production deployments, credentials (especially the `refresh_token`) must be stored in a secure secrets manager (like AWS/GCP Secrets Manager) and loaded into the environment at runtime, not stored in plaintext files.
 
 ### REQ-6: Policy Compliance Exception Handler
 Implement Try-Catch-Exempt-Retry algorithm for policy violations:
