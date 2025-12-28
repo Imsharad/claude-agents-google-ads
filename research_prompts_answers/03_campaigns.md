@@ -110,7 +110,7 @@ import uuid
 
 def create_tcpa_campaign(client, customer_id, budget_resource_name):
     """
-    Creates a Search campaign with Maximize Conversions bidding strategy 
+    Creates a Search campaign with Maximize Conversions bidding strategy
     and a specific Target CPA.
     """
     campaign_service = client.get_service("CampaignService")
@@ -122,22 +122,22 @@ def create_tcpa_campaign(client, customer_id, budget_resource_name):
     campaign.advertising_channel_type = client.enums.AdvertisingChannelTypeEnum.SEARCH
     campaign.status = client.enums.CampaignStatusEnum.PAUSED
     campaign.campaign_budget = budget_resource_name
-  
+
     # Bidding Strategy Configuration: Maximize Conversions with Target CPA
     campaign.bidding_strategy_type = client.enums.BiddingStrategyTypeEnum.MAXIMIZE_CONVERSIONS
     # Note: target_cpa_micros is a field ON the maximize_conversions object
     campaign.maximize_conversions.target_cpa_micros = 50000000  # 50.00 currency units (e.g., ₹50)
-  
+
     # Network Settings (Search Network Only for higher intent)
     campaign.network_settings.target_google_search = True
     campaign.network_settings.target_search_network = True
     campaign.network_settings.target_content_network = False # Disable Display Expansion
     campaign.network_settings.target_partner_search_network = False
-  
+
     # Issue Mutate Request
     try:
         response = campaign_service.mutate_campaigns(
-            customer_id=customer_id, 
+            customer_id=customer_id,
             operations=[campaign_operation]
         )
         return response.results.resource_name
@@ -159,24 +159,24 @@ def create_max_clicks_campaign(client, customer_id, budget_resource_name):
     campaign_service = client.get_service("CampaignService")
     operation = client.get_type("CampaignOperation")
     campaign = operation.create
-  
+
     campaign.name = f"Growth Tier - MaxClicks - {uuid.uuid4()}"
     campaign.advertising_channel_type = client.enums.AdvertisingChannelTypeEnum.SEARCH
     campaign.status = client.enums.CampaignStatusEnum.PAUSED
     campaign.campaign_budget = budget_resource_name
-  
+
     # Bidding Configuration
     campaign.bidding_strategy_type = client.enums.BiddingStrategyTypeEnum.MAXIMIZE_CLICKS
     # In v22, set the bid ceiling directly on the maximize_clicks object
     campaign.maximize_clicks.cpc_bid_ceiling_micros = 20000000 # 20.00 currency units (e.g., ₹20)
-  
+
     # Network Settings
     campaign.network_settings.target_google_search = True
     campaign.network_settings.target_search_network = True
-  
+
     try:
         response = campaign_service.mutate_campaigns(
-            customer_id=customer_id, 
+            customer_id=customer_id,
             operations=[operation]
         )
         return response.results.resource_name
@@ -197,15 +197,15 @@ def create_portfolio_strategy(client, customer_id):
     """
     bs_service = client.get_service("BiddingStrategyService")
     operation = client.get_type("BiddingStrategyOperation")
-  
+
     strategy = operation.create
     strategy.name = f"Portfolio tROAS Strategy - {uuid.uuid4()}"
     strategy.type_ = client.enums.BiddingStrategyTypeEnum.MAXIMIZE_CONVERSION_VALUE
     strategy.maximize_conversion_value.target_roas = 4.5 # 450% ROAS
-  
+
     try:
         response = bs_service.mutate_bidding_strategies(
-            customer_id=customer_id, 
+            customer_id=customer_id,
             operations=[operation]
         )
         resource_name = response.results.resource_name
@@ -312,17 +312,17 @@ def update_budget(client, customer_id, budget_resource_id, new_amount_micros):
     """
     budget_service = client.get_service("CampaignBudgetService")
     operation = client.get_type("CampaignBudgetOperation")
-  
+
     # Identify budget by resource name
     operation.update.resource_name = f"customers/{customer_id}/campaignBudgets/{budget_resource_id}"
     operation.update.amount_micros = new_amount_micros
-  
+
     # FieldMask is critical: Update ONLY the amount, touch nothing else.
     client.copy_from(operation.update_mask, protobuf_helpers.field_mask(None, operation.update))
-  
+
     try:
         response = budget_service.mutate_campaign_budgets(
-            customer_id=customer_id, 
+            customer_id=customer_id,
             operations=[operation]
         )
         return response.results.resource_name
@@ -470,17 +470,17 @@ def create_negative_shared_set(client, customer_id, set_name, keywords):
     """
     shared_set_service = client.get_service("SharedSetService")
     criterion_service = client.get_service("SharedCriterionService")
-  
+
     # 1. Create the Container (Shared Set)
     ss_op = client.get_type("SharedSetOperation")
     ss_op.create.name = set_name
     ss_op.create.type_ = client.enums.SharedSetTypeEnum.NEGATIVE_KEYWORDS
-  
+
     ss_response = shared_set_service.mutate_shared_sets(
         customer_id=customer_id, operations=[ss_op]
     )
     shared_set_resource = ss_response.results.resource_name
-  
+
     # 2. Create Operations for each Keyword
     criteria_ops =
     for kw in keywords:
@@ -489,12 +489,12 @@ def create_negative_shared_set(client, customer_id, set_name, keywords):
         op.create.keyword.match_type = client.enums.KeywordMatchTypeEnum.BROAD
         op.create.shared_set = shared_set_resource
         criteria_ops.append(op)
-      
+
     # 3. Add Keywords to Set (Batching recommended for large lists)
     criterion_service.mutate_shared_criteria(
         customer_id=customer_id, operations=criteria_ops
     )
-  
+
     return shared_set_resource
 ```
 

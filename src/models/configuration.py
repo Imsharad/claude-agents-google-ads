@@ -6,6 +6,7 @@ class CampaignConfiguration(BaseModel):
     """
     Pydantic model for campaign configuration payload.
     """
+
     vertical_type: VerticalType
     offer_name: str = Field(..., max_length=200)
     target_audience_broad: str = Field(..., max_length=200)

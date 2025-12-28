@@ -3,10 +3,13 @@ import os
 import logging
 
 # Add the src directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
 
 from config.google_ads_client import get_google_ads_client
 from google.ads.googleads.errors import GoogleAdsException
+
 
 def main():
     """
@@ -19,7 +22,9 @@ def main():
     google_ads_client = get_google_ads_client()
 
     if not google_ads_client:
-        logging.error("Failed to initialize Google Ads client. Please check your configuration.")
+        logging.error(
+            "Failed to initialize Google Ads client. Please check your configuration."
+        )
         print("\nConnection Test: FAILED")
         return
 
@@ -37,8 +42,10 @@ def main():
             print(f"- {resource_name}")
 
     except GoogleAdsException as ex:
-        logging.error(f"Request with ID '{ex.request_id}' failed with status "
-                      f"'{ex.error.code().name}' and includes the following errors:")
+        logging.error(
+            f"Request with ID '{ex.request_id}' failed with status "
+            f"'{ex.error.code().name}' and includes the following errors:"
+        )
         for error in ex.failure.errors:
             logging.error(f"\tError with message '{error.message}'.")
             if error.location:
@@ -48,6 +55,7 @@ def main():
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
         print("\nConnection Test: FAILED")
+
 
 if __name__ == "__main__":
     main()
