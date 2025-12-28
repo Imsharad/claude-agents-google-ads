@@ -107,7 +107,7 @@ def initialize_client(config_path="google-ads.yaml"):
         # Load from storage will read the YAML and strict v22 versioning
         # REQ-5: Proto Plus is implicitly True in modern libs, but explicit is better.
         client = GoogleAdsClient.load_from_storage(
-            path=config_path, 
+            path=config_path,
             version="v22"
         )
         return client
@@ -118,16 +118,16 @@ def initialize_client(config_path="google-ads.yaml"):
 # Example of Proto Plus Ergonomics (Enabled)
 def create_campaign_budget_proposal(client, customer_id):
     service = client.get_service("CampaignBudgetService")
-  
+
     # In Proto Plus, we instantiate the operation as a Python object wrapper
     operation = client.get_type("CampaignBudgetOperation")
-  
+
     # Direct attribute access (Pythonic)
     budget = operation.create
     budget.name = "Phase 1 Research Budget"
     budget.amount_micros = 5000000
     budget.delivery_method = client.enums.BudgetDeliveryMethodEnum.STANDARD
-  
+
     return operation
 
 # Contrast with Legacy Mode (Conceptual - DO NOT USE for Phase 1)
@@ -229,7 +229,7 @@ use_proto_plus: True
 # 4. Contextual Login (Crucial for MCCs)
 # This ID represents the Manager Account acting as the "Logged In User".
 # It must be a Manager Account ID (e.g., 123-456-7890).
-login_customer_id: "INSERT_MCC_ACCOUNT_ID" 
+login_customer_id: "INSERT_MCC_ACCOUNT_ID"
 ```
 
 ### 4. Multi-Account Management (MCC Architecture)
@@ -289,7 +289,7 @@ def get_google_ads_client():
     # Check if we are in a secure env with injected variables
     if "GOOGLE_ADS_REFRESH_TOKEN" in os.environ:
         return GoogleAdsClient.load_from_env(version="v22")
-  
+
     # Fallback to local storage
     return GoogleAdsClient.load_from_storage("google-ads.yaml", version="v22")
 ```
@@ -389,28 +389,28 @@ def submit_operation_with_policy_handling(service, customer_id, operation):
     except GoogleAdsException as ex:
         # Check if the error is exclusively policy-related
         ignorable_policy_topics =
-      
+
         for error in ex.failure.errors:
             # If we hit a non-policy error (e.g. invalid url), we must fail
             if error.error_code.policy_finding_error!= \
                service.client.enums.PolicyFindingErrorEnum.POLICY_FINDING:
                 raise ex
-          
+
             # Extract details
             if error.details.policy_finding_details:
                 details = error.details.policy_finding_details
                 for entry in details.policy_topic_entries:
                     ignorable_policy_topics.append(entry.topic)
-      
+
         # If we found topics to exempt, retry
         if ignorable_policy_topics:
             # Add exemption to the operation
             # Note: We must modify the operation in place
             validation_param = operation.policy_validation_parameter
             validation_param.ignorable_policy_topics.extend(ignorable_policy_topics)
-          
+
             print(f"Retrying with exemptions: {ignorable_policy_topics}")
-          
+
             try:
                 # Attempt 2: Retry with Exemption
                 return service.mutate_ad_group_ads(
@@ -479,17 +479,17 @@ Data is not real-time.
 
 ```
 -- Use search_stream
-SELECT 
-  campaign.id, 
-  campaign.name, 
+SELECT
+  campaign.id,
+  campaign.name,
   campaign.status,
   campaign.advertising_channel_type,
-  metrics.impressions, 
-  metrics.clicks, 
+  metrics.impressions,
+  metrics.clicks,
   metrics.ctr,
   metrics.cost_micros,
   metrics.conversions
-FROM campaign 
+FROM campaign
 WHERE segments.date DURING LAST_30_DAYS
   AND campaign.status!= 'REMOVED'
 ORDER BY metrics.impressions DESC
@@ -500,7 +500,7 @@ ORDER BY metrics.impressions DESC
 **SQL**
 
 ```
-SELECT 
+SELECT
   ad_group.id,
   ad_group_criterion.criterion_id,
   ad_group_criterion.keyword.text,
@@ -509,7 +509,7 @@ SELECT
   metrics.average_cpc,
   metrics.conversions,
   metrics.cost_per_conversion
-FROM keyword_view 
+FROM keyword_view
 WHERE segments.date DURING LAST_7_DAYS
   AND campaign.status = 'ENABLED'
   AND ad_group.status = 'ENABLED'

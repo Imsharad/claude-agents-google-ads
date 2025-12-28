@@ -102,7 +102,7 @@ async def policy_enforcement_callback(tool_name: str, tool_input: dict):
         # Business Logic: Auto-approve small bid changes
         if tool_name == "update_bid" and tool_input.get("amount", 0) < 5.00:
              return PermissionResultAllow()
-      
+
         # Deny large changes, requiring human intervention via a different workflow
         return PermissionResultDeny(
             message="Budget changes over $5.00 require human approval via the dashboard."

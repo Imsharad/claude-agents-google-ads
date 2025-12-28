@@ -141,15 +141,15 @@ from typing import List
 
 class GoogleSearchAd(BaseModel):
     headlines: List[str] = Field(
-       ..., 
-        min_items=3, 
-        max_items=15, 
+       ...,
+        min_items=3,
+        max_items=15,
         description="List of 3-15 distinct headlines."
     )
     descriptions: List[str] = Field(
-       ..., 
-        min_items=2, 
-        max_items=4, 
+       ...,
+        min_items=2,
+        max_items=4,
         description="List of 2-4 distinct descriptions."
     )
 
@@ -160,11 +160,11 @@ class GoogleSearchAd(BaseModel):
         invalid_length = [h for h in v if len(h) > 30]
         if invalid_length:
             raise ValueError(f"Headlines exceed 30 chars: {invalid_length}")
-      
+
         # Constraint: No emojis (Policy Check)
         if any(char for h in v for char in h if is_emoji(char)):
              raise ValueError("Emojis are not allowed in search headlines.")
-           
+
         return v
 
     @field_validator('descriptions')

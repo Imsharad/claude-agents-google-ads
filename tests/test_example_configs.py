@@ -20,7 +20,10 @@ EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 # Skip entire module if examples directory doesn't exist yet (TDD pattern)
 if not EXAMPLES_DIR.exists():
-    pytest.skip("TASK-015 not implemented (examples/ directory missing)", allow_module_level=True)
+    pytest.skip(
+        "TASK-015 not implemented (examples/ directory missing)",
+        allow_module_level=True,
+    )
 
 # These imports require TASK-012 to be complete
 from src.models.configuration import CampaignConfiguration  # noqa: E402
@@ -185,7 +188,9 @@ class TestSaaSConfigValidation:
 class TestConfigurationCompleteness:
     """Test that all configurations have all required fields."""
 
-    @pytest.fixture(params=["workshop_config.json", "dentist_config.json", "saas_config.json"])
+    @pytest.fixture(
+        params=["workshop_config.json", "dentist_config.json", "saas_config.json"]
+    )
     def config_data(self, request) -> dict:
         """Load each configuration file."""
         config_path = EXAMPLES_DIR / request.param
@@ -216,7 +221,9 @@ class TestConfigurationCompleteness:
 class TestConfigurationContent:
     """Test that configurations have meaningful content."""
 
-    @pytest.fixture(params=["workshop_config.json", "dentist_config.json", "saas_config.json"])
+    @pytest.fixture(
+        params=["workshop_config.json", "dentist_config.json", "saas_config.json"]
+    )
     def config(self, request) -> CampaignConfiguration:
         """Load and validate each configuration."""
         config_path = EXAMPLES_DIR / request.param
@@ -226,7 +233,12 @@ class TestConfigurationContent:
 
     def test_offer_name_not_placeholder(self, config):
         """Offer name should not be a placeholder like 'TBD' or 'TODO'."""
-        assert config.offer_name.lower() not in ["tbd", "todo", "placeholder", "example"]
+        assert config.offer_name.lower() not in [
+            "tbd",
+            "todo",
+            "placeholder",
+            "example",
+        ]
 
     def test_target_audience_descriptive(self, config):
         """Target audience should be descriptive (> 10 chars)."""

@@ -10,6 +10,7 @@ import pytest
 # Note: These fixtures will work once TASK-012 implements the models.
 # Until then, imports will fail and tests will be skipped/fail as expected.
 
+
 @pytest.fixture
 def sample_education_config_data() -> dict:
     """Raw data for education vertical configuration."""

@@ -12,7 +12,9 @@ Note: Tests will be SKIPPED until TASK-013 implementation exists.
 import pytest
 
 # Skip entire module if generators don't exist yet (TDD pattern)
-pytest.importorskip("src.generators.keyword_generator", reason="TASK-013 not implemented")
+pytest.importorskip(
+    "src.generators.keyword_generator", reason="TASK-013 not implemented"
+)
 
 from src.generators.keyword_generator import generate_keywords, Keyword  # noqa: E402
 from src.generators.negative_keywords import (  # noqa: E402
@@ -68,13 +70,17 @@ class TestKeywordGeneration:
     def test_generate_keywords_count_range(self, education_config):
         """Should return between 10-30 keyword candidates."""
         keywords = generate_keywords(education_config)
-        assert 10 <= len(keywords) <= 30, f"Expected 10-30 keywords, got {len(keywords)}"
+        assert (
+            10 <= len(keywords) <= 30
+        ), f"Expected 10-30 keywords, got {len(keywords)}"
 
     def test_keyword_has_phrase_match_type(self, education_config):
         """All keywords should use PHRASE match type."""
         keywords = generate_keywords(education_config)
         for keyword in keywords:
-            assert keyword.match_type == "PHRASE", f"Expected PHRASE, got {keyword.match_type}"
+            assert (
+                keyword.match_type == "PHRASE"
+            ), f"Expected PHRASE, got {keyword.match_type}"
 
     def test_keywords_derived_from_offer_name(self, education_config):
         """Keywords should include terms from offer_name."""
@@ -83,8 +89,7 @@ class TestKeywordGeneration:
 
         # At least one keyword should contain "ai" or "workshop"
         has_offer_term = any(
-            "ai" in text or "workshop" in text
-            for text in keyword_texts
+            "ai" in text or "workshop" in text for text in keyword_texts
         )
         assert has_offer_term, "Keywords should derive from offer_name"
 
@@ -95,8 +100,7 @@ class TestKeywordGeneration:
 
         # At least one keyword should relate to value proposition
         has_value_term = any(
-            "deal" in text or "crm" in text or "sales" in text
-            for text in keyword_texts
+            "deal" in text or "crm" in text or "sales" in text for text in keyword_texts
         )
         assert has_value_term, "Keywords should derive from value_proposition"
 
@@ -104,7 +108,9 @@ class TestKeywordGeneration:
         """All keywords should be unique."""
         keywords = generate_keywords(education_config)
         keyword_texts = [k.text.lower() for k in keywords]
-        assert len(keyword_texts) == len(set(keyword_texts)), "Keywords should be unique"
+        assert len(keyword_texts) == len(
+            set(keyword_texts)
+        ), "Keywords should be unique"
 
     def test_keyword_not_empty(self, education_config):
         """Keywords should not have empty text."""
@@ -140,7 +146,17 @@ class TestUniversalNegatives:
     def test_universal_negatives_contains_required_terms(self):
         """Should include standard negative terms from PRD."""
         negatives = get_universal_negatives()
-        required_terms = ["free", "cheap", "crack", "torrent", "download", "job", "career", "hiring", "apply"]
+        required_terms = [
+            "free",
+            "cheap",
+            "crack",
+            "torrent",
+            "download",
+            "job",
+            "career",
+            "hiring",
+            "apply",
+        ]
 
         for term in required_terms:
             assert term in negatives, f"Missing required negative: {term}"
@@ -158,7 +174,9 @@ class TestVerticalNegatives:
         """Education vertical should generate specific negatives."""
         negatives = generate_vertical_negatives(VerticalType.EDUCATION)
         assert isinstance(negatives, list)
-        assert len(negatives) >= 10, "Should generate minimum 10 vertical-specific negatives"
+        assert (
+            len(negatives) >= 10
+        ), "Should generate minimum 10 vertical-specific negatives"
 
     def test_generate_vertical_negatives_saas(self):
         """SaaS vertical should generate specific negatives."""
