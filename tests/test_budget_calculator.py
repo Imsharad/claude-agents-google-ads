@@ -17,7 +17,7 @@ import pytest
 # Skip entire module if budget calculator doesn't exist yet (TDD pattern)
 pytest.importorskip("src.budget.calculator", reason="TASK-014 not implemented")
 
-from src.budget.calculator import (
+from src.budget.calculator import (  # noqa: E402
     calculate_daily_budget,
     validate_budget,
     BudgetValidationError,

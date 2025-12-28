@@ -23,8 +23,8 @@ if not EXAMPLES_DIR.exists():
     pytest.skip("TASK-015 not implemented (examples/ directory missing)", allow_module_level=True)
 
 # These imports require TASK-012 to be complete
-from src.models.configuration import CampaignConfiguration
-from src.models.enums import VerticalType, MonetizationModel
+from src.models.configuration import CampaignConfiguration  # noqa: E402
+from src.models.enums import VerticalType, MonetizationModel  # noqa: E402
 
 
 class TestExampleFilesExist:

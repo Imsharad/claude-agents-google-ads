@@ -14,13 +14,13 @@ import pytest
 # Skip entire module if generators don't exist yet (TDD pattern)
 pytest.importorskip("src.generators.keyword_generator", reason="TASK-013 not implemented")
 
-from src.generators.keyword_generator import generate_keywords, Keyword
-from src.generators.negative_keywords import (
+from src.generators.keyword_generator import generate_keywords, Keyword  # noqa: E402
+from src.generators.negative_keywords import (  # noqa: E402
     get_universal_negatives,
     generate_vertical_negatives,
 )
-from src.models.configuration import CampaignConfiguration
-from src.models.enums import VerticalType, MonetizationModel
+from src.models.configuration import CampaignConfiguration  # noqa: E402
+from src.models.enums import VerticalType, MonetizationModel  # noqa: E402
 
 
 class TestKeywordGeneration:
