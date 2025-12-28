@@ -94,6 +94,52 @@ The agent's system prompt defines:
 - **Capabilities**: Campaign creation, persona generation, optimization
 - **Boundaries**: Cannot modify live campaigns without user approval
 - **Example Interactions**: Sample user requests and expected responses
+
+3.5 Gather-Action-Verify Agent Loop
+This section defines the core recursive reasoning loop for all campaign management operations. The agent will follow this pattern to ensure that every change is intentional, verified, and safe. This loop is designed to operate within a daily session pattern, as defined in the Session Management section, to maintain context and control costs.
+
+### Loop Phases
+
+#### GATHER:
+- **Collect current campaign state:** The agent retrieves the latest configuration and status of all relevant campaigns, ad groups, and keywords.
+- **Fetch performance metrics:** The agent queries the Google Ads API for key performance indicators (KPIs) such as impressions, clicks, cost, conversions, and CTR.
+- **Identify optimization opportunities:** The agent analyzes the gathered data to identify areas for improvement, such as underperforming keywords, budget allocation issues, or opportunities for bid adjustments.
+
+#### ACTION:
+- **Execute single atomic change:** The agent executes a single, atomic change to the campaign, such as pausing a keyword, increasing a bid, or updating ad copy. This ensures that the impact of each change can be isolated and verified.
+- **Log action with timestamp:** Every action taken by the agent is logged with a timestamp and a description of the change. This provides a clear audit trail and is essential for debugging and performance analysis.
+
+#### VERIFY:
+- **Confirm change applied:** The agent queries the Google Ads API to confirm that the change was successfully applied and that the new state matches the intended state.
+- **Check for errors/policy violations:** The agent checks for any errors or policy violations that may have resulted from the change.
+- **If failed: enter recovery sub-loop:** If the verification fails, the agent enters a recovery sub-loop to address the issue.
+
+### Verification Requirements per Action Type
+To ensure each action is verified correctly, the agent will use the following checks based on the action type:
+
+| Action Type | Verification Steps | Google Ads Service | Key Fields to Check |
+|---|---|---|---|
+| **Pause Keyword** | Fetch the keyword criterion | `GoogleAdsService` | `campaign_criterion.status` == `PAUSED` |
+| **Update Bid** | Fetch the ad group or keyword criterion | `AdGroupService` / `CampaignCriterionService` | `ad_group.cpc_bid_micros` or `criterion.cpc_bid_micros` matches the new value |
+| **Add Negative Keyword** | Query for the new negative keyword | `GoogleAdsService` | `campaign_criterion.negative` is `true` and `criterion.keyword.text` matches |
+| **Update Budget** | Fetch the campaign budget | `CampaignBudgetService` | `campaign_budget.amount_micros` matches the new value |
+| **Pause Ad Group** | Fetch the ad group | `AdGroupService` | `ad_group.status` == `PAUSED` |
+| **Update Ad Copy** | Fetch the ad | `AdService` | `ad.responsive_search_ad.headlines` and `descriptions` match the new content |
+
+### Error Recovery Sub-Loop
+If the verification phase detects a failure, the agent will initiate a recovery sub-loop with the following steps:
+1. **Revert Change:** The agent will attempt to revert the failed change to restore the campaign to its previous state.
+2. **Analyze Failure:** The agent will analyze the error messages and logs to determine the root cause of the failure.
+3. **Notify User:** The agent will notify the user of the failed action and the steps taken to recover.
+4. **Retry or Escalate:** Based on the analysis, the agent will either retry the action with a modified approach or escalate the issue to the user for manual intervention.
+
+### Iteration Limits
+To prevent infinite loops and runaway operations, the agent will adhere to the following iteration limits:
+- **Max Iterations per Session:** The main Gather-Action-Verify loop will be limited to a maximum of 10 iterations per daily session.
+- **Max Recovery Attempts:** The error recovery sub-loop will be limited to a maximum of 3 retry attempts for a single failed action.
+
+### Session Management and Forking
+The Gather-Action-Verify loop operates within the context of a daily session. For exploring multiple optimization strategies in parallel, the agent will utilize **Session Forking**. This allows the agent to simulate different series of actions in isolated branches, compare their projected outcomes, and then commit the most promising strategy to the main session for execution. This technique is particularly useful for A/B testing different ad copy, bidding strategies, or targeting parameters without affecting the live campaign until a decision is made.
 4. Operational Workflows
 4.1 "The Setup" (Day 0)
 User provides Campaign Configuration.
