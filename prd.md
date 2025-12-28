@@ -2,9 +2,6 @@ Product Requirement Document (PRD): The "Growth-Tier" Ads Protocol Agent
 1. Executive Summary
 The Growth-Tier Ads Protocol Agent is a vertical-agnostic, intelligent system designed to automate the deployment of Google Ads campaigns for any high-value offer (Service, Education, SaaS, or Consultation). It enforces a strict financial protocol (spend ₹20k to unlock ₹20k credit) to lower CAC by 50%, while leveraging Generative AI to adapt creative strategy to the specific market vertical.
 
-1.1. DECISION-001: Asset Generation Scope (Text-Only for Initial Phases)
-To ensure a focused and rapid MVP development, a key architectural decision has been made to limit asset generation to text-only formats (headlines, descriptions) for Phases 1 through 3. Visual asset generation, including stock image integration and advanced GenAI-powered image creation, is strategically deferred to Phase 4 as a paid add-on. This approach prioritizes the core value proposition of delivering high-performing search campaigns, aligns with market competitors, and significantly reduces initial operational costs and architectural complexity. For a detailed rationale, see the full decision log.
-
 2. Core Philosophy: The Protocol vs. The Product
 This agent does not just "run ads"; it executes a Financial & Strategic Protocol.
 
@@ -28,248 +25,159 @@ Instead of hardcoding "Manager/Freelancer", the agent dynamically breaks the tar
 
 Logic: Identify 3 distinct purchase drivers (e.g., Status, Fear, Efficiency).
 Output: 3 Ad Group themes optimized for the specific vertical.
-3.2.2 Abstracted Text Asset Generation (The "Polarity Test")
-For Phases 1-3, asset generation is strictly limited to text-based assets (headlines and descriptions). The agent applies the "Polarity Test" to any vertical, testing two psychological extremes in ad copy.
+3.2.2 Abstracted Asset Generation (The "Polarity Test")
+The agent applies the "Polarity Test" to any vertical, testing two psychological extremes.
 
-- **Angle A (The Pull)**: Focuses on desire, gain, and efficiency (e.g., "Master AI", "Close More Deals", "Smile Confidently").
-- **Angle B (The Push)**: Focuses on fear, loss aversion, and FOMO (e.g., "Don't get replaced", "Stop losing leads", "Prevent tooth loss").
-
-This text-first approach allows the agent to focus on optimizing campaign structure and messaging, which are the primary drivers of performance on the Search Network.
-
-**AdObject Schema Definition**
-
-To support this text-only approach, the `AdObject` data structure is defined as follows:
-
-```
-{
-  "headlines": [],
-  "descriptions": [],
-  "paths": []
-}
-```
-
-This schema ensures that all ad assets can be managed as simple string arrays, reducing complexity in both the agent and the downstream Google Ads API integration.
-
-**Asset Generation Roadmap**
-
-The following roadmap outlines the phased approach to asset generation:
-
-| Phase | Feature Scope | Technology | Rationale |
-|---|---|---|---|
-| **Phase 1 (MVP)** | Text-Only Search (Headlines, Descriptions, Sitelinks) | LLM (Claude/GPT) | Focus on "Message-Market Fit" & Quality Score. Lowest risk. |
-| **Phase 2 (PMF)** | Stock Integration (Unsplash/Pexels API) | Unsplash API (Free tier) | Capture 10-15% CTR uplift without GenAI cost |
-| **Phase 3 (Scale)** | User Uploads (DAM) | S3 / Cloud Storage | Allow brand assets (logos, product shots) |
-| **Phase 4 (Advanced)**| GenAI Studio (Custom images) | DALL-E 3 / Stable Diffusion | Paid add-on/"Pro Tier" to offset high unit costs |
+Angle A (The Pull): Desire, Gain, Efficiency (e.g., "Master AI", "Close More Deals", "Smile Confidently").
+Angle B (The Push): Fear, Loss Aversion, FOMO (e.g., "Don't get replaced", "Stop losing leads", "Prevent tooth loss").
 3.2.3 Dynamic Upsell/Bridging
 The "Backend" logic adapts to the monetization_model.
 
-- **For Education**: Generates Webinar Transition Script.
-- **For SaaS**: Generates Demo Booking Nudge ("Stop struggling manually, let us show you...").
-- **For Service**: Generates Consultation Value Stack ("This audit is worth $500, free for you today").
-
-**Note on US-004**: As per the analysis in `user_stories.md`, the implementation details and delivery mechanism for this feature are not yet fully defined. Therefore, User Story US-004 ("Monetization-Aware Upsell Scripting") is considered out of scope for the initial MVP and will be revisited in a later phase.
+For Education: Generates Webinar Transition Script.
+For SaaS: Generates Demo Booking Nudge ("Stop struggling manually, let us show you...").
+For Service: Generates Consultation Value Stack ("This audit is worth $500, free for you today").
 3.3 Execution Layer (The Campaign Manager)
-3.3.1 Golden Ratio Budget Scaler & Circuit Breaker
-The agent shall replace static budget formulas with a dynamic, Fibonacci-based scaling algorithm to optimize spend based on performance, governed by strict financial safety protocols. This system is designed to maximize growth during periods of high efficiency while aggressively cutting spend when performance declines.
-
-**Decision Matrix (LTV:CAC Ratio)**:
-The core of the scaling logic is a decision matrix based on the Lifetime Value to Customer Acquisition Cost ratio, evaluated on a 30-day rolling window.
-
-| LTV:CAC Ratio | Action                 | Budget Formula            |
-|---------------|------------------------|---------------------------|
-| < 1.0         | Pause Campaign         | N/A                       |
-| 1.0 - 2.9     | Maintain               | `Current Budget`          |
-| 3.0 - 3.9     | Scale Moderately       | `Next = Current × 1.618`  |
-| > 4.0         | Scale Aggressively     | `Next = Current × 2.618`  |
-
-**Circuit Breaker Logic**:
-To prevent runaway spend from algorithmic error or market volatility, a hard financial circuit breaker is implemented.
-
-- **Hard Cap**: Maximum daily budget is capped at ₹2,000.
-- **Safety Margin Trigger**: The circuit breaker is triggered if daily spend exceeds **1.2x** the set daily budget (e.g., triggering at ₹2,400 on a ₹2,000 budget) to counteract Google's 2x overdelivery rule.
-- **Action**: Pause campaign for the remainder of the day and apply a `Circuit_Breaker_Paused` label.
-
-**Tripwire Model Exception**:
-Campaigns tagged with the `Tripwire_Exempt` label are exempt from the "Pause Campaign" rule when LTV:CAC < 1.0. This allows for strategic loss-leader campaigns where the primary goal is data acquisition or email capture, not immediate profitability.
-
-**Implementation: Hourly Watchdog**:
-The circuit breaker logic must be executed by a cron job or scheduled task running at an hourly frequency.
-
-- **Query**: Fetches `metrics.cost_micros` for all `ENABLED` campaigns for the current day (`TODAY`).
-- **Condition**: Ignores campaigns with the `Tripwire_Exempt` label.
-- **Action**: If `cost_micros` exceeds the trigger threshold, the script pauses the campaign and sends an alert.
+3.3.1 Growth-Tier Financial Constraints
+Global Rule: Daily Budget = Total Budget / 30. (Standard: ₹660/day).
+Bidding Rule: "Maximize Clicks" with Cap.
+Cap Logic: Cap = Max acceptable CPA / Estimated Conversion Rate (Dynamically calculated or defaulted to ₹50).
 3.3.2 Keyword Expansion Protocol
 Constraint: Use "Phrase Match" to capture intent variation.
 Safety: Auto-deploy "Universal Negative List" (free, cheap, crack, job) + "Vertical Specific Negatives" (generated by LLM).
 
 3.4 Claude Agent SDK Architecture
-This section defines the technical implementation of the autonomous agent runtime, based on architectural decisions from research phase 1 (see research_summary.md).
+This section defines the technical implementation of the autonomous agent runtime.
 
-3.4.1 SDK Initialization & Configuration
-The agent is initialized using the stateful `ClaudeSDKClient`, which maintains session history and tool configurations.
-
-**Key Configuration (`ClaudeAgentOptions`)**:
-- **`model`**: `claude-3-5-sonnet-20241022` or latest.
-- **`max_turns`**: Set to `30` to allow for complex, multi-step optimization workflows.
-- **`system_prompt`**: Loaded from YAML templates to define the agent's core operational logic and constraints (see Section 3.5).
-- **`mcp_servers`**: Registers the in-process Google Ads tool server.
-- **`allowed_tools`**: Explicitly whitelists callable tools using the format `mcp__{server_name}__{tool_name}`.
+3.4.1 SDK Initialization
+The agent uses Claude Agent SDK to enable autonomous operation. Configuration:
 
 ```python
-# Foundational agent configuration
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
 
-agent_options = ClaudeAgentOptions(
+options = ClaudeAgentOptions(
     model="claude-3-5-sonnet-20241022",
     max_turns=30,
-    system_prompt=load_prompt_template("prompts/optimization_agent.yaml")["system"],
-    mcp_servers={"google_ads": google_ads_mcp_server},
-    allowed_tools=[
-        "mcp__google_ads__get_campaign_metrics",
-        "mcp__google_ads__update_campaign_budget"
-        # ... other whitelisted tools
-    ]
+    system_prompt=load_system_prompt("prompts/google_ads_agent.txt"),
+    custom_tools=register_google_ads_tools(),
+    permission_mode="ask"  # User approval for campaign mutations
 )
+
+client = ClaudeSDKClient(options)
 ```
 
-3.4.2 MCP Server Architecture: In-Process Topology
-The agent uses an **In-Process MCP Server** to provide tools to the Claude agent. This architecture is critical for sharing the authenticated `GoogleAdsClient` object, eliminating IPC overhead, and centralizing secret management.
+3.4.2 MCP Server Setup
+The agent registers Google Ads API operations as Model Context Protocol (MCP) tools:
 
-**Implementation Pattern**:
-An instance of the `GoogleAdsClient` is created once and passed to the tool functions, ensuring efficient reuse of the authenticated session. Tool functions are designed to be resilient, catching any underlying API or network exceptions. Errors are not propagated as unhandled exceptions, which would crash the agent. Instead, they are returned as a structured error message within the tool's output. This allows the agent to reason about the failure (e.g., "The Google Ads API is temporarily unavailable, I will retry in 5 minutes.") and continue its task or degrade gracefully.
+- **Lifecycle**: MCP server initialized on agent startup
+- **Tool Discovery**: Automatic registration via @tool decorator
+- **Error Handling**: Google Ads API exceptions wrapped and surfaced to agent for reasoning
+
+3.4.3 Tool Registration Pattern
+Each Google Ads operation (create campaign, fetch metrics, etc.) is registered as a callable tool:
 
 ```python
-from claude_agent_sdk import create_sdk_mcp_server, tool
-
-# Shared Google Ads client (initialized once, reused by all tools)
-google_ads_client = GoogleAdsClient.load_from_storage("google-ads.yaml")
-
 @tool
-def get_campaign_metrics(customer_id: str, campaign_id: str) -> dict:
-    """Fetch performance metrics for a campaign."""
-    # Direct access to shared client instance
-    ga_service = google_ads_client.get_service("GoogleAdsService")
-    # ... GAQL query logic ...
-    return {"impressions": 1234, "clicks": 56, "cost_micros": 789000}
-
-# Create in-process MCP server
-google_ads_mcp_server = create_sdk_mcp_server(
-    name="google_ads",
-    tools=[get_campaign_metrics, update_campaign_budget]
-)
+def create_growth_tier_campaign(
+    customer_id: str,
+    campaign_name: str,
+    budget_micros: int,
+    tier: str
+) -> str:
+    """Creates a Google Ads campaign with tier-based bidding."""
+    # Implementation details
 ```
 
-3.4.3 Permission Handling: Custom `can_use_tool` Callback
-Standard permission modes like `'ask'` are insufficient for a headless agent. A custom `can_use_tool` callback is implemented to enforce a 3-tier safety model, providing granular control over tool execution.
+3.4.4 System Prompt Structure
+The agent's system prompt defines:
 
-**3-Tier Safety Model**:
-1.  **Auto-Deny**: Permanently block destructive operations (e.g., `DeleteCampaign`).
-2.  **Auto-Allow**: Permit safe, read-only operations (e.g., `GetCampaignMetrics`).
-3.  **Conditional/Ask**: For financial mutations (e.g., `UpdateBudget`), check against thresholds. In a headless environment, this denies the request and queues it for human approval via a separate interface.
+- **Role**: "You are a Google Ads campaign automation specialist..."
+- **Capabilities**: Campaign creation, persona generation, optimization
+- **Boundaries**: Cannot modify live campaigns without user approval
+- **Example Interactions**: Sample user requests and expected responses
 
-**Implementation Pattern**:
-```python
-from claude_agent_sdk import PermissionResultAllow, PermissionResultDeny
+### 3.5 LLM Prompt Template Architecture
+This section specifies the architecture for generating and managing LLM prompts, ensuring a clear separation of logic, data, and presentation. This architecture is designed for maintainability, versioning, and dynamic adaptation to different campaign verticals and operational modes.
 
-async def google_ads_permission_controller(tool_name: str, tool_input: dict):
-    """
-    Custom permission callback for Google Ads mutations.
-    Implements 3-tier safety: Auto-Deny, Auto-Allow, Conditional.
-    """
-    # Tier 1: DENY - Destructive operations always blocked
-    BLOCKED_TOOLS = ["mcp__google_ads__delete_campaign", "mcp__google_ads__delete_ad_group"]
-    if tool_name in BLOCKED_TOOLS:
-        return PermissionResultDeny(message="Destructive operations are permanently disabled.")
+#### 3.5.1 Prompt Storage and Format
+- **Storage:** All prompt templates shall be stored as individual files in the `prompts/` directory.
+- **Format:** **YAML** is the designated format for prompt storage. Its support for multi-line strings (using the `|` block scalar) and comments (`#`) makes it vastly superior to JSON or hardcoded Python strings for writing and maintaining complex, human-readable prompts.
 
-    # Tier 2: ALLOW - Read-only operations (no financial impact)
-    READ_ONLY_PREFIXES = ["mcp__google_ads__get_", "mcp__google_ads__search_"]
-    if any(tool_name.startswith(prefix) for prefix in READ_ONLY_PREFIXES):
-        return PermissionResultAllow()
+#### 3.5.2 Variable Injection Engine
+- **Engine:** **Jinja2** will be used as the templating engine to inject dynamic data into the YAML prompt templates. This allows for clean separation between the static prompt structure and the variable campaign data.
+- **Placeholders:** The following placeholders are defined for variable injection:
+  - `{vertical_type}`: The industry vertical (e.g., "EDUCATION", "SAAS").
+  - `{offer_name}`: The specific product or service name.
+  - `{value_proposition}`: The core benefit of the offer.
+  - `{target_audience}`: A description of the ideal customer.
+  - `{monetization_model}`: The conversion strategy (e.g., "LEAD_GEN", "DIRECT_SALE").
+  - `{geo_target}`: The geographical area to target.
 
-    # Tier 3: CONDITIONAL - Budget changes require checks
-    if tool_name == "mcp__google_ads__update_campaign_budget":
-        budget_change = tool_input.get("new_budget_micros", 0) - tool_input.get("current_budget_micros", 0)
-        if budget_change > 5000000:  # > ₹5 change
-            # For headless: Deny + Queue for human approval
-            return PermissionResultDeny(message="Budget changes > ₹5.00 require human approval.")
-        return PermissionResultAllow()  # Small changes are auto-approved.
+#### 3.5.3 Template Switching Mechanism
+The agent will operate in different modes, requiring distinct cognitive postures. The system will load different prompt templates based on the current operational mode:
+- **Setup Mode:** Utilizes creative, exploratory prompts for initial campaign generation, persona creation, and ad copy drafting. (e.g., `prompts/setup/generate_personas.yaml`)
+- **Monitoring Mode:** Employs conservative, analytical prompts focused on data interpretation, anomaly detection, and optimization recommendations. (e.g., `prompts/monitoring/analyze_ctr.yaml`)
 
-    # Default: Deny unknown tools as a fail-safe
-    return PermissionResultDeny(message="Tool not recognized by security policy.")
+#### 3.5.4 Output Validation
+To ensure the LLM's output is reliable and structurally correct, all generative tasks must be validated against a Pydantic schema. The agent will use libraries like `instructor` to coerce the LLM's JSON output directly into a Pydantic model, which enforces:
+- **Type safety:** Ensures integers are integers, strings are strings.
+- **Structural integrity:** Validates the presence of required fields and the shape of nested objects.
+- **Business logic:** Custom validators enforce domain-specific rules (e.g., ad headline character limits).
+
+#### 3.5.5 Example Prompts
+The following examples illustrate the directory structure and content for vertical-specific prompts.
+
+**Directory Structure:**
+```
+prompts/
+├── setup/
+│   ├── generate_personas.yaml
+│   ├── generate_ad_copy.yaml
+│   └── generate_negative_keywords.yaml
+└── monitoring/
+    └── analyze_performance.yaml
 ```
 
-3.4.4 Session Management: Daily Session Pattern
-To avoid context drift and excessive token costs over long-running operations (7+ days), the agent uses a **Daily Session Pattern**.
+**Example: `prompts/setup/generate_personas.yaml`**
+```yaml
+#
+# Generates three distinct user personas for a given vertical.
+#
+# Version: 1.0
+# Author: Growth-Tier Agent System
+#
+system_prompt: |
+  You are a world-class marketing strategist specializing in psychographic segmentation. Your task is to generate three distinct, non-overlapping user personas for the provided offer. For each persona, focus on their primary "job-to-be-done" and their core purchase drivers.
 
--   A new `session_id` is created for each 24-hour operational cycle.
--   A summary of the previous day's actions and results is injected into the initial prompt of the new session to provide continuity.
--   This pattern isolates failures, keeps context windows clean, and aligns with the daily reporting cadence of Google Ads.
+user_prompt: |
+  Generate 3 distinct user personas for the following offer. Output a valid JSON object following the specified Pydantic schema.
 
-3.4.5 Persistence Architecture: Sidecar Database
-A critical limitation of the SDK is the "Invisible History" problem: on session resumption, the LLM recalls context, but the client does not re-emit past message events. To solve this, a **Sidecar Persistence Pattern** is used.
+  **Offer Details:**
+  - **Vertical:** {{ vertical_type }}
+  - **Offer Name:** {{ offer_name }}
+  - **Value Proposition:** {{ value_proposition }}
+  - **Target Audience:** {{ target_audience }}
+  - **Monetization Model:** {{ monetization_model }}
+  - **Geography:** {{ geo_target }}
 
--   **Event Interception**: Every event (`UserMessage`, `AssistantMessage`, `ToolUse`, `ToolResult`) is captured by the application wrapper.
--   **External Storage**: Events are immediately written to a durable database (e.g., PostgreSQL).
--   **History Reconstruction**: The UI and logs are populated from this external database, ensuring a complete and auditable history of agent actions, independent of the SDK's internal state.
+  **Example Use Cases:**
 
-3.4.6 System Prompt Structure & Strategy
-The agent's "operating system" is defined by a system prompt loaded from a YAML file. This prompt establishes the agent's persona, constraints, and operational workflow.
+  1.  **Education Vertical (e.g., "AI Workshop"):**
+      - Persona 1: The "Career Climber" - Seeks promotion, fears stagnation.
+      - Persona 2: The "Skeptical Manager" - Needs to prove ROI for their team.
+      - Persona 3: The "Curious Freelancer" - Wants to add a new skill to win clients.
 
--   **Role Definition**: "You are a conservative Google Ads optimization agent."
--   **Behavioral Constraints**: "NEVER delete campaigns. Obtain approval for budget increases > 10%."
--   **Workflow Definition**: A step-by-step guide on how to approach an optimization task (e.g., "1. Check metrics, 2. Identify anomalies, 3. Propose changes...").
--   **Dynamic Context**: The initial user message, not the system prompt, is used to inject dynamic, real-time data like daily performance summaries or critical alerts.
--   **Example Interaction**:
-    *   **User**: "Please check the performance of the 'Summer Sale' campaign."
-    *   **Agent (Tool Use)**: Calls `get_campaign_metrics` with `campaign_name='Summer Sale'`.
-    *   **Agent (Response)**: "The 'Summer Sale' campaign has a CTR of 3.5% and a CPC of $1.20. I recommend increasing the budget to capture more traffic."
+  2.  **SaaS Vertical (e.g., "CRM Tool"):**
+      - Persona 1: The "Overwhelmed Founder" - Drowning in spreadsheets, needs efficiency.
+      - Persona 2: The "Data-Driven VP" - Cares only about pipeline metrics and team performance.
+      - Persona 3: The "Frustrated Sales Rep" - Hates manual data entry, wants to spend more time selling.
 
-3.5 Gather-Action-Verify Agent Loop
-This section defines the core recursive reasoning loop for all campaign management operations. The agent will follow this pattern to ensure that every change is intentional, verified, and safe. This loop is designed to operate within a daily session pattern, as defined in the Session Management section, to maintain context and control costs.
+  3.  **Service Vertical (e.g., "Dental Implants"):**
+      - Persona 1: The "Health-Conscious Senior" - Worried about long-term dental health.
+      - Persona 2: The "Confident Professional" - Seeks a perfect smile for career reasons.
+      - Persona 3: The "Anxious Patient" - Terrified of dental procedures, needs reassurance and trust.
 
-### Loop Phases
-
-#### GATHER:
-- **Collect current campaign state:** The agent retrieves the latest configuration and status of all relevant campaigns, ad groups, and keywords.
-- **Fetch performance metrics:** The agent queries the Google Ads API for key performance indicators (KPIs) such as impressions, clicks, cost, conversions, and CTR.
-- **Identify optimization opportunities:** The agent analyzes the gathered data to identify areas for improvement, such as underperforming keywords, budget allocation issues, or opportunities for bid adjustments.
-
-#### ACTION:
-- **Execute single atomic change:** The agent executes a single, atomic change to the campaign, such as pausing a keyword, increasing a bid, or updating ad copy. This ensures that the impact of each change can be isolated and verified.
-- **Log action with timestamp:** Every action taken by the agent is logged with a timestamp and a description of the change. This provides a clear audit trail and is essential for debugging and performance analysis.
-
-#### VERIFY:
-- **Confirm change applied:** The agent queries the Google Ads API to confirm that the change was successfully applied and that the new state matches the intended state.
-- **Check for errors/policy violations:** The agent checks for any errors or policy violations that may have resulted from the change.
-- **If failed: enter recovery sub-loop:** If the verification fails, the agent enters a recovery sub-loop to address the issue.
-
-### Verification Requirements per Action Type
-To ensure each action is verified correctly, the agent will use the following checks based on the action type:
-
-| Action Type | Verification Steps | Google Ads Service | Key Fields to Check |
-|---|---|---|---|
-| **Pause Keyword** | Fetch the keyword criterion | `GoogleAdsService` | `campaign_criterion.status` == `PAUSED` |
-| **Update Bid** | Fetch the ad group or keyword criterion | `AdGroupService` / `CampaignCriterionService` | `ad_group.cpc_bid_micros` or `criterion.cpc_bid_micros` matches the new value |
-| **Add Negative Keyword** | Query for the new negative keyword | `GoogleAdsService` | `campaign_criterion.negative` is `true` and `criterion.keyword.text` matches |
-| **Update Budget** | Fetch the campaign budget | `CampaignBudgetService` | `campaign_budget.amount_micros` matches the new value |
-| **Pause Ad Group** | Fetch the ad group | `AdGroupService` | `ad_group.status` == `PAUSED` |
-| **Update Ad Copy** | Fetch the ad | `AdService` | `ad.responsive_search_ad.headlines` and `descriptions` match the new content |
-
-### Error Recovery Sub-Loop
-If the verification phase detects a failure, the agent will initiate a recovery sub-loop with the following steps:
-1. **Revert Change:** The agent will attempt to revert the failed change to restore the campaign to its previous state.
-2. **Analyze Failure:** The agent will analyze the error messages and logs to determine the root cause of the failure.
-3. **Notify User:** The agent will notify the user of the failed action and the steps taken to recover.
-4. **Retry or Escalate:** Based on the analysis, the agent will either retry the action with a modified approach or escalate the issue to the user for manual intervention.
-
-### Iteration Limits
-To prevent infinite loops and runaway operations, the agent will adhere to the following iteration limits:
-- **Max Iterations per Session:** The main Gather-Action-Verify loop will be limited to a maximum of 10 iterations per daily session.
-- **Max Recovery Attempts:** The error recovery sub-loop will be limited to a maximum of 3 retry attempts for a single failed action.
-
-### Session Management and Forking
-The Gather-Action-Verify loop operates within the context of a daily session. For exploring multiple optimization strategies in parallel, the agent will utilize **Session Forking**. This allows the agent to simulate different series of actions in isolated branches, compare their projected outcomes, and then commit the most promising strategy to the main session for execution. This technique is particularly useful for A/B testing different ad copy, bidding strategies, or targeting parameters without affecting the live campaign until a decision is made.
-
+  Now, generate the personas for the provided offer details.
+```
 4. Operational Workflows
 4.1 "The Setup" (Day 0)
 User provides Campaign Configuration.
@@ -313,25 +221,12 @@ LLM Prompt Templates must be variable-injected (not hardcoded text):
 - Versioning: Track prompt versions for A/B testing
 
 ### REQ-3: Tier-Based Bidding Strategy
-Bidding logic maps to Growth-Tier Protocol monetization models. The following table defines the precise mapping between the business objective and the Google Ads API configuration.
+Bidding logic maps to Growth-Tier Protocol monetization models:
+- **TRIPWIRE_UPSELL**: Maximize Conversions with Target CPA
+- **DIRECT_SALE**: Target ROAS (Return on Ad Spend)
+- **LEAD_GEN**: Maximize Clicks with CPC cap
+- **BOOK_CALL**: Maximize Conversions (no target)
 
-| Monetization Model | Bidding Strategy | Google Ads Setting |
-|--------------------|------------------|-------------------|
-| TRIPWIRE_UPSELL | Target CPA | MAXIMIZE_CONVERSIONS + target_cpa_micros |
-| DIRECT_SALE | Target ROAS | TARGET_ROAS + target_roas |
-| LEAD_GEN | Max Clicks | MAXIMIZE_CLICKS + cpc_bid_ceiling_micros |
-| BOOK_CALL | Target CPA | MAXIMIZE_CONVERSIONS + target_cpa_micros |
-
-#### Warm-up Strategy ("Cold Start" Constraint)
-For new campaigns, especially those using Target CPA or Target ROAS, a "warm-up" period is required to gather sufficient conversion data. The system shall not apply a `target_cpa_micros` or `target_roas` value until the campaign has registered a minimum of 15 conversions. During this initial phase, the campaign should run on a `MAXIMIZE_CONVERSIONS` or `MAXIMIZE_CLICKS` strategy without a specific target to allow the algorithm to learn.
-
-#### Learning Phase Protection
-Once a smart bidding strategy is active, its learning phase must be protected to ensure performance stability. The automated system must adhere to the following rules:
-- **Budget Changes**: Do not increase or decrease the campaign's daily budget by more than 20% in a single 24-hour period.
-- **Target Changes**: Do not change the `target_cpa_micros` or `target_roas` value by more than 20% in a single 24-hour period.
-- **Strategy Changes**: Do not change the bidding strategy of a campaign without resetting the warm-up and learning phase.
-
-Violating these constraints can reset the bidding algorithm's learning model, leading to performance volatility.
 ### REQ-4: Hierarchical Reporting Structure
 Reporting must group data by "Persona" and "Angle" regardless of vertical:
 - Level 1 Queries: Campaign/AdGroup metrics (no keyword segment)
@@ -356,89 +251,26 @@ Reporting must group data by "Persona" and "Angle" regardless of vertical:
 - **Token Storage**: Securely store refresh_token, auto-refresh access_token
 
 ### REQ-6: Policy Compliance Exception Handler
-The agent must implement a robust Try-Catch-Exempt-Retry algorithm to handle Google Ads policy violations gracefully. This prevents campaign creation failures due to common, non-critical policy flags.
+Implement Try-Catch-Exempt-Retry algorithm for policy violations:
 
-#### 1. Pre-Flight Check with `validate_only=True`
-Before any mutation (creation or update of Ads, Keywords, etc.), the agent must perform a pre-flight check by first sending the request with the `validate_only` header set to `True`. This allows for early detection of policy issues without committing the entity.
+1. **Catch**: Wrap all mutation operations (create campaign, upload ad, etc.) in try-catch
+2. **Detect**: Check for `GoogleAdsException.error_code == policy_finding_error`
+3. **Extract**: Parse `policy_topic_entries` from exception
+4. **Exempt**: Construct `PolicyValidationParameter` with `ignorable_policy_topics`
+5. **Retry**: Re-submit mutation with exemption parameter
+6. **Escalate**: If retry fails, log detailed error and alert human operator
 
-#### 2. The Try-Catch-Exempt-Retry Workflow
-
-**Workflow Diagram (as Pseudocode):**
-```
-function submit_google_ads_entity(entity_data):
-    // Step 1: Pre-flight check
-    pre_flight_response = google_ads_api.mutate(entity_data, validate_only=True)
-    if pre_flight_response.has_policy_violation_error():
-        policy_topics = extract_policy_topics(pre_flight_response.error)
-        exemption_parameter = construct_policy_exemption(policy_topics)
-        entity_data.add_parameter(exemption_parameter)
-
-    // Step 2: Try initial submission (or submission with exemption)
-    try:
-        final_response = google_ads_api.mutate(entity_data, validate_only=False)
-        return final_response
-    catch GoogleAdsException as ex:
-        // Step 3: Catch policy violations on the actual submission
-        if ex.has_policy_violation_error():
-            policy_topics = extract_policy_topics(ex)
-            exemption_parameter = construct_policy_exemption(policy_topics)
-            entity_data.add_parameter(exemption_parameter)
-
-            // Step 4: Retry submission with exemption
-            try:
-                retry_response = google_ads_api.mutate(entity_data, validate_only=False)
-                return retry_response
-            catch GoogleAdsException as retry_ex:
-                // Step 5: Escalate on persistent failure
-                escalate_to_human("Retry failed after exemption", retry_ex)
-                return None
-        else:
-            // Handle other non-policy errors
-            escalate_to_human("Non-policy API error", ex)
-            return None
-```
-
-#### 3. `PolicyValidationParameter` Construction
-When a `policy_finding_error` is detected, the agent must construct a `PolicyValidationParameter` object.
-
-- **`ignorable_policy_topics`**: This field is a list of resource names for the policy topics found in the error details. The resource names are extracted from the `policy_topic_entries` in the `GoogleAdsFailure` object.
-- **Example**: If an ad is flagged for "DESTINATION_NOT_WORKING", the `ignorable_policy_topics` list would contain the resource name associated with that policy topic.
-
+**Example Flow**:
 ```python
-# Pseudocode for constructing the parameter
-from google.ads.googleads.v22.services.types import AdGroupAdService
-
-policy_validation_parameter = client.get_type("PolicyValidationParameter")
-for entry in policy_finding_details.policy_topic_entries:
-    policy_validation_parameter.ignorable_policy_topics.append(entry.topic)
-
-# This parameter is then attached to the mutate request
-request = AdGroupAdService.MutateAdGroupAdsRequest()
-request.operations[0].... # build your operation
-request.partial_failure = True
-request.policy_validation_parameter = policy_validation_parameter
+try:
+    create_ad(customer_id, ad_copy)
+except GoogleAdsException as ex:
+    if ex.failure.errors[0].error_code.policy_finding_error:
+        policy_topics = extract_policy_topics(ex)
+        retry_with_exemption(customer_id, ad_copy, policy_topics)
+    else:
+        escalate_to_human(ex)
 ```
-
-#### 4. Human Escalation Triggers
-The agent must escalate to a human operator under the following conditions:
-
-1.  **Retry Failure**: The second submission attempt (with `PolicyValidationParameter`) fails with another `policy_finding_error`. This indicates a non-ignorable policy issue.
-2.  **Disapproved Status**: An entity is successfully created but is later found to have a status of `DISAPPROVED`. This requires manual review.
-3.  **Non-Policy API Errors**: Any `GoogleAdsException` that is *not* a `policy_finding_error` should be escalated, as it may indicate a deeper issue with the request or API.
-4.  **Sensitive Verticals**: If the campaign `vertical_type` is in a sensitive category (e.g., healthcare, finance), all policy violations should trigger an immediate human review, even if they are technically ignorable.
-
-#### 5. Common Policy Violations & Handling Strategies
-
-This table outlines how the agent should handle common, often ignorable, policy violations.
-
-| Policy Violation | Description | Agent Action |
-| :--- | :--- | :--- |
-| **DESTINATION_NOT_WORKING** | The landing page URL is unreachable or returns an error. | **Exempt & Retry**. Often a temporary issue. Escalate if retry fails. |
-| **TRADEMARKS_IN_AD_TEXT** | Use of a trademarked term in the ad copy. | **Exempt & Retry**. Allowed if the advertiser is a reseller or informational site. |
-| **EDITORIAL** (e.g., punctuation) | Minor grammatical or formatting issues. | **Exempt & Retry**. Usually safe to ignore. |
-| **POTENTIALLY_SENSITIVE_CONTENT** | The ad content may be sensitive for some audiences. | **Exempt & Retry**. Common for many verticals. |
-| **DANGEROUS_PRODUCTS_OR_SERVICES** | (e.g., weapons, drugs) | **DO NOT EXEMPT**. Immediate escalation required. This should be caught by pre-check logic. |
-| **MISLEADING_CONTENT** | (e.g., "guaranteed results") | **DO NOT EXEMPT**. The agent's ad generation logic (REQ-8) should prevent this. Escalate if it occurs. |
 
 ## Intelligence Layer Requirements
 
@@ -470,6 +302,21 @@ Output schema for persona objects:
 - Implementation: Use `SharedSetService` for universal list, `CampaignCriterionService` for campaign-level
 
 ## Monitoring & Optimization Requirements
+
+### REQ-10: Golden Ratio Budget Scaler
+Replace static budget formula with Fibonacci-based scaling:
+
+**Decision Matrix** (based on LTV:CAC ratio):
+
+| LTV:CAC Ratio | Action | Formula |
+|---------------|--------|---------|
+| < 1.0 | Pause Campaign | N/A |
+| 1.0 - 2.9 | Maintain | Current Budget |
+| 3.0 - 3.9 | Scale Moderately | Next = Current × 1.618 |
+| 4.0+ | Scale Aggressively | Next = Current × 2.618 |
+
+**Circuit Breaker**: Max daily budget = ₹2,000 (prevent runaway spend)
+**Exception**: Tripwire model campaigns exempt from pause rule (prioritize email capture)
 
 ### REQ-11: CTR Threshold Monitoring
 - **Frequency**: Daily (not real-time due to API delay)
