@@ -1,97 +1,28 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-12-29T01:00:00Z",
+  "last_updated": "2025-12-29T01:25:00Z",
   "max_parallel_tasks": 5,
-  "active_sessions": 1,
+  "active_sessions": 3,
   "tasks": {
-    "TASK-000": {
-      "status": "completed",
-      "session_id": "sessions/13535533309531173281",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/5",
-      "completed_at": "2025-12-29T00:50:00Z"
-    },
-    "TASK-001": {
-      "status": "completed",
-      "session_id": "sessions/16019360090854142714",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/3",
-      "completed_at": "2025-12-29T00:50:00Z"
-    },
-    "TASK-002": {
-      "status": "completed",
-      "session_id": "sessions/4288920034606666027",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/7",
-      "completed_at": "2025-12-29T00:55:00Z"
-    },
-    "TASK-003": {
-      "status": "completed",
-      "session_id": "sessions/14705544347092047660",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/8",
-      "completed_at": "2025-12-29T00:55:00Z"
-    },
-    "TASK-004": {
-      "status": "completed",
-      "session_id": "sessions/14129617969833698085",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/4",
-      "completed_at": "2025-12-29T00:50:00Z"
-    },
-    "TASK-005": {
-      "status": "completed",
-      "session_id": "sessions/2199212690074558399",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/9",
-      "completed_at": "2025-12-29T00:55:00Z"
-    },
-    "TASK-006": {
-      "status": "completed",
-      "session_id": "sessions/2344997714124751827",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/6",
-      "completed_at": "2025-12-29T00:55:00Z"
-    },
-    "TASK-007": {
-      "status": "completed",
-      "session_id": "sessions/3956643688678849039",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/10",
-      "completed_at": "2025-12-29T00:55:00Z"
-    },
-    "TASK-010": {
-      "status": "completed",
-      "session_id": "sessions/16721566770188284192",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/1",
-      "completed_at": "2025-12-29T00:45:00Z"
-    },
-    "TASK-011": {
-      "status": "completed",
-      "session_id": "sessions/11786849417234487562",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/11",
-      "completed_at": "2025-12-29T00:58:00Z"
-    },
-    "TASK-012": {
-      "status": "in_progress",
-      "session_id": "sessions/2542128425969190195",
-      "pr_url": null,
-      "started_at": "2025-12-29T01:00:00Z"
-    },
-    "TASK-013": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
-    "TASK-014": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
-    "TASK-015": {"status": "blocked", "session_id": null, "pr_url": null, "blocked_by": ["TASK-012"]},
-    "TASK-016": {
-      "status": "completed",
-      "session_id": "sessions/13756300551230697280",
-      "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/2",
-      "completed_at": "2025-12-29T00:45:00Z"
-    }
+    "TASK-000": {"status": "completed", "session_id": "sessions/13535533309531173281", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/5"},
+    "TASK-001": {"status": "completed", "session_id": "sessions/16019360090854142714", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/3"},
+    "TASK-002": {"status": "completed", "session_id": "sessions/4288920034606666027", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/7"},
+    "TASK-003": {"status": "completed", "session_id": "sessions/14705544347092047660", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/8"},
+    "TASK-004": {"status": "completed", "session_id": "sessions/14129617969833698085", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/4"},
+    "TASK-005": {"status": "completed", "session_id": "sessions/2199212690074558399", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/9"},
+    "TASK-006": {"status": "completed", "session_id": "sessions/2344997714124751827", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/6"},
+    "TASK-007": {"status": "completed", "session_id": "sessions/3956643688678849039", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/10"},
+    "TASK-010": {"status": "completed", "session_id": "sessions/16721566770188284192", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/1"},
+    "TASK-011": {"status": "completed", "session_id": "sessions/11786849417234487562", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/11"},
+    "TASK-012": {"status": "completed", "session_id": "sessions/2542128425969190195", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/12"},
+    "TASK-013": {"status": "in_progress", "session_id": "sessions/7051805073688425637", "pr_url": null, "started_at": "2025-12-29T01:25:00Z"},
+    "TASK-014": {"status": "in_progress", "session_id": "sessions/17308865177682097607", "pr_url": null, "started_at": "2025-12-29T01:25:00Z"},
+    "TASK-015": {"status": "in_progress", "session_id": "sessions/299296933061158466", "pr_url": null, "started_at": "2025-12-29T01:25:00Z"},
+    "TASK-016": {"status": "completed", "session_id": "sessions/13756300551230697280", "pr_url": "https://github.com/Imsharad/claude-agents-google-ads/pull/2"}
   },
   "session_index": {
-    "sessions/13535533309531173281": "TASK-000",
-    "sessions/16019360090854142714": "TASK-001",
-    "sessions/4288920034606666027": "TASK-002",
-    "sessions/14705544347092047660": "TASK-003",
-    "sessions/14129617969833698085": "TASK-004",
-    "sessions/2199212690074558399": "TASK-005",
-    "sessions/2344997714124751827": "TASK-006",
-    "sessions/3956643688678849039": "TASK-007",
-    "sessions/16721566770188284192": "TASK-010",
-    "sessions/11786849417234487562": "TASK-011",
-    "sessions/2542128425969190195": "TASK-012",
-    "sessions/13756300551230697280": "TASK-016"
+    "sessions/7051805073688425637": "TASK-013",
+    "sessions/17308865177682097607": "TASK-014",
+    "sessions/299296933061158466": "TASK-015"
   }
 }
