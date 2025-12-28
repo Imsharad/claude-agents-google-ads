@@ -2,6 +2,9 @@ Product Requirement Document (PRD): The "Growth-Tier" Ads Protocol Agent
 1. Executive Summary
 The Growth-Tier Ads Protocol Agent is a vertical-agnostic, intelligent system designed to automate the deployment of Google Ads campaigns for any high-value offer (Service, Education, SaaS, or Consultation). It enforces a strict financial protocol (spend ₹20k to unlock ₹20k credit) to lower CAC by 50%, while leveraging Generative AI to adapt creative strategy to the specific market vertical.
 
+1.1. DECISION-001: Asset Generation Scope (Text-Only for Initial Phases)
+To ensure a focused and rapid MVP development, a key architectural decision has been made to limit asset generation to text-only formats (headlines, descriptions) for Phases 1 through 3. Visual asset generation, including stock image integration and advanced GenAI-powered image creation, is strategically deferred to Phase 4 as a paid add-on. This approach prioritizes the core value proposition of delivering high-performing search campaigns, aligns with market competitors, and significantly reduces initial operational costs and architectural complexity. For a detailed rationale, see the full decision log.
+
 2. Core Philosophy: The Protocol vs. The Product
 This agent does not just "run ads"; it executes a Financial & Strategic Protocol.
 
@@ -25,17 +28,46 @@ Instead of hardcoding "Manager/Freelancer", the agent dynamically breaks the tar
 
 Logic: Identify 3 distinct purchase drivers (e.g., Status, Fear, Efficiency).
 Output: 3 Ad Group themes optimized for the specific vertical.
-3.2.2 Abstracted Asset Generation (The "Polarity Test")
-The agent applies the "Polarity Test" to any vertical, testing two psychological extremes.
+3.2.2 Abstracted Text Asset Generation (The "Polarity Test")
+For Phases 1-3, asset generation is strictly limited to text-based assets (headlines and descriptions). The agent applies the "Polarity Test" to any vertical, testing two psychological extremes in ad copy.
 
-Angle A (The Pull): Desire, Gain, Efficiency (e.g., "Master AI", "Close More Deals", "Smile Confidently").
-Angle B (The Push): Fear, Loss Aversion, FOMO (e.g., "Don't get replaced", "Stop losing leads", "Prevent tooth loss").
+- **Angle A (The Pull)**: Focuses on desire, gain, and efficiency (e.g., "Master AI", "Close More Deals", "Smile Confidently").
+- **Angle B (The Push)**: Focuses on fear, loss aversion, and FOMO (e.g., "Don't get replaced", "Stop losing leads", "Prevent tooth loss").
+
+This text-first approach allows the agent to focus on optimizing campaign structure and messaging, which are the primary drivers of performance on the Search Network.
+
+**AdObject Schema Definition**
+
+To support this text-only approach, the `AdObject` data structure is defined as follows:
+
+```
+{
+  "headlines": [],
+  "descriptions": [],
+  "paths": []
+}
+```
+
+This schema ensures that all ad assets can be managed as simple string arrays, reducing complexity in both the agent and the downstream Google Ads API integration.
+
+**Asset Generation Roadmap**
+
+The following roadmap outlines the phased approach to asset generation:
+
+| Phase | Feature Scope | Technology | Rationale |
+|---|---|---|---|
+| **Phase 1 (MVP)** | Text-Only Search (Headlines, Descriptions, Sitelinks) | LLM (Claude/GPT) | Focus on "Message-Market Fit" & Quality Score. Lowest risk. |
+| **Phase 2 (PMF)** | Stock Integration (Unsplash/Pexels API) | Unsplash API (Free tier) | Capture 10-15% CTR uplift without GenAI cost |
+| **Phase 3 (Scale)** | User Uploads (DAM) | S3 / Cloud Storage | Allow brand assets (logos, product shots) |
+| **Phase 4 (Advanced)**| GenAI Studio (Custom images) | DALL-E 3 / Stable Diffusion | Paid add-on/"Pro Tier" to offset high unit costs |
 3.2.3 Dynamic Upsell/Bridging
 The "Backend" logic adapts to the monetization_model.
 
-For Education: Generates Webinar Transition Script.
-For SaaS: Generates Demo Booking Nudge ("Stop struggling manually, let us show you...").
-For Service: Generates Consultation Value Stack ("This audit is worth $500, free for you today").
+- **For Education**: Generates Webinar Transition Script.
+- **For SaaS**: Generates Demo Booking Nudge ("Stop struggling manually, let us show you...").
+- **For Service**: Generates Consultation Value Stack ("This audit is worth $500, free for you today").
+
+**Note on US-004**: As per the analysis in `user_stories.md`, the implementation details and delivery mechanism for this feature are not yet fully defined. Therefore, User Story US-004 ("Monetization-Aware Upsell Scripting") is considered out of scope for the initial MVP and will be revisited in a later phase.
 3.3 Execution Layer (The Campaign Manager)
 3.3.1 Growth-Tier Financial Constraints
 Global Rule: Daily Budget = Total Budget / 30. (Standard: ₹660/day).
