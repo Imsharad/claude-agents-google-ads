@@ -3,9 +3,12 @@
 MINIMUM_BUDGET = 10000
 RUPEE_TO_MICROS = 1_000_000
 
+
 class BudgetValidationError(ValueError):
     """Custom exception for budget validation errors."""
+
     pass
+
 
 def validate_budget(budget: int) -> bool:
     """
@@ -25,6 +28,7 @@ def validate_budget(budget: int) -> bool:
             f"Provided budget {budget} is below the minimum required amount of {MINIMUM_BUDGET}."
         )
     return True
+
 
 def calculate_daily_budget(total_budget: int, duration_days: int) -> int:
     """
