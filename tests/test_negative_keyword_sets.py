@@ -105,14 +105,10 @@ class TestNegativeKeywordSets(unittest.TestCase):
         # Mock the Google Ads client and its services
         mock_google_ads_client = MagicMock()
         mock_get_google_ads_client.return_value = mock_google_ads_client
-        mock_shared_criterion_service = (
-            mock_google_ads_client.get_service.return_value
-        )
+        mock_shared_criterion_service = mock_google_ads_client.get_service.return_value
 
         # Call the function
-        add_keywords_to_shared_set(
-            "12345", "shared_set_resource_name", ["kw1", "kw2"]
-        )
+        add_keywords_to_shared_set("12345", "shared_set_resource_name", ["kw1", "kw2"])
 
         # Assertions
         mock_shared_criterion_service.mutate_shared_criteria.assert_called_once()

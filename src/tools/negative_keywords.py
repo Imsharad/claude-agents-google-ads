@@ -5,16 +5,13 @@ This module manages shared negative keyword sets in Google Ads.
 """
 
 from typing import List
-from google.ads.googleads.client import GoogleAdsClient
 from src.config.google_ads_client import get_google_ads_client
 from src.generators.negative_keywords import get_universal_negatives
 
 UNIVERSAL_NEGATIVE_KEYWORDS_SET_NAME = "Universal Negative Keywords"
 
 
-def apply_universal_negative_keywords_to_campaign(
-    customer_id: str, campaign_id: str
-):
+def apply_universal_negative_keywords_to_campaign(customer_id: str, campaign_id: str):
     """
     Applies the universal negative keyword shared set to a campaign.
 
@@ -57,9 +54,7 @@ def apply_universal_negative_keywords_to_campaign(
         )
 
     # Attach the shared set to the campaign
-    attach_shared_set_to_campaign(
-        customer_id, campaign_id, shared_set_resource_name
-    )
+    attach_shared_set_to_campaign(customer_id, campaign_id, shared_set_resource_name)
 
 
 def create_shared_negative_set(customer_id: str, name: str) -> str:
@@ -79,7 +74,9 @@ def create_shared_negative_set(customer_id: str, name: str) -> str:
     shared_set_operation = google_ads_client.get_type("SharedSetOperation")
     shared_set = shared_set_operation.create
     shared_set.name = name
-    shared_set.type_ = google_ads_client.get_type("SharedSetTypeEnum").SharedSetType.NEGATIVE_KEYWORDS
+    shared_set.type_ = google_ads_client.get_type(
+        "SharedSetTypeEnum"
+    ).SharedSetType.NEGATIVE_KEYWORDS
 
     response = shared_set_service.mutate_shared_sets(
         customer_id=customer_id, operations=[shared_set_operation]
@@ -108,9 +105,9 @@ def add_keywords_to_shared_set(
         shared_criterion = operation.create
         shared_criterion.shared_set = shared_set_resource_name
         shared_criterion.keyword.text = keyword
-        shared_criterion.keyword.match_type = (
-            google_ads_client.get_type("KeywordMatchTypeEnum").KeywordMatchType.BROAD
-        )
+        shared_criterion.keyword.match_type = google_ads_client.get_type(
+            "KeywordMatchTypeEnum"
+        ).KeywordMatchType.BROAD
         operations.append(operation)
 
     shared_criterion_service.mutate_shared_criteria(
