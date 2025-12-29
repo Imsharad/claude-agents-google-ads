@@ -48,7 +48,9 @@ def generate_keywords(config: CampaignConfiguration) -> List[Keyword]:
         for i in range(len(unique_words)):
             for j in range(i + 1, len(unique_words)):
                 for k in range(j + 1, len(unique_words)):
-                    keywords.add(f"{unique_words[i]} {unique_words[j]} {unique_words[k]}")
+                    keywords.add(
+                        f"{unique_words[i]} {unique_words[j]} {unique_words[k]}"
+                    )
 
     # 4. Ensure we have between 10 and 30 keywords
     final_keywords = sorted(list(keywords))
