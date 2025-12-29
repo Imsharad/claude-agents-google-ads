@@ -9,6 +9,7 @@ from google.ads.googleads.v22.common.types import PolicyValidationParameter
 
 class PolicyViolationError(Exception):
     """Custom exception for policy violation errors that persist after a retry."""
+
     pass
 
 
@@ -50,6 +51,7 @@ def handle_policy_violation(func: Callable) -> Callable:
 
     The decorated function is expected to accept a 'policy_validation_parameter' kwarg.
     """
+
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         """
@@ -62,13 +64,16 @@ def handle_policy_violation(func: Callable) -> Callable:
             if policy_topics:
                 # If policy topics are found, create an exemption and retry the operation.
                 exemption = create_exemption_parameter(policy_topics)
-                kwargs['policy_validation_parameter'] = exemption
+                kwargs["policy_validation_parameter"] = exemption
                 try:
                     return func(*args, **kwargs)
                 except GoogleAdsException as retry_ex:
                     # If the retry also fails, raise a custom exception.
-                    raise PolicyViolationError("Retry with exemption failed.") from retry_ex
+                    raise PolicyViolationError(
+                        "Retry with exemption failed."
+                    ) from retry_ex
             else:
                 # If it's not a policy violation, re-raise the original exception.
                 raise
+
     return wrapper

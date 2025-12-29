@@ -21,7 +21,9 @@ from src.handlers.policy_handler import (
 )
 
 
-def create_mock_google_ads_exception(policy_topics: list[str] | None) -> GoogleAdsException:
+def create_mock_google_ads_exception(
+    policy_topics: list[str] | None,
+) -> GoogleAdsException:
     """Helper function to create a mock GoogleAdsException."""
     mock_failure = Mock(spec=GoogleAdsFailure)
     mock_error = Mock(spec=GoogleAdsError)
@@ -104,7 +106,6 @@ class TestPolicyHandler(unittest.TestCase):
         exemption = last_kwargs["policy_validation_parameter"]
         self.assertEqual(exemption.ignorable_policy_topics, ["topic1"])
 
-
     def test_handle_policy_violation_retry_fails(self):
         """Test that PolicyViolationError is raised when retry fails."""
         policy_exception = create_mock_google_ads_exception(["topic1"])
@@ -132,6 +133,7 @@ class TestPolicyHandler(unittest.TestCase):
 
         self.assertIsNotNone(context.exception)
         self.assertEqual(mock_api_call.call_count, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
