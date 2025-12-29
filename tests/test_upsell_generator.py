@@ -1,8 +1,8 @@
-
 import pytest
 from src.generators.upsell_generator import generate_upsell_script, UpsellScript
 from src.models.configuration import CampaignConfiguration
 from src.models.enums import MonetizationModel, VerticalType
+
 
 @pytest.fixture
 def base_config():
@@ -14,6 +14,7 @@ def base_config():
         monetization_model=MonetizationModel.DIRECT_SALE,
     )
 
+
 def test_tripwire_upsell_script(base_config):
     base_config.monetization_model = MonetizationModel.TRIPWIRE_UPSELL
     script = generate_upsell_script(base_config)
@@ -22,6 +23,7 @@ def test_tripwire_upsell_script(base_config):
     assert "upcoming live webinar" in script.transition
     assert script.cta == "Register for the Free Training"
     assert "Limited spots are available" in script.urgency_element
+
 
 def test_direct_sale_script(base_config):
     base_config.monetization_model = MonetizationModel.DIRECT_SALE
@@ -32,6 +34,7 @@ def test_direct_sale_script(base_config):
     assert script.cta == "Book a 15-Minute Demo"
     assert "calendars fill up quickly" in script.urgency_element
 
+
 def test_lead_gen_script(base_config):
     base_config.monetization_model = MonetizationModel.LEAD_GEN
     script = generate_upsell_script(base_config)
@@ -40,6 +43,7 @@ def test_lead_gen_script(base_config):
     assert "build a custom action plan" in script.transition
     assert script.cta == "Claim Your Free Consultation"
     assert "only offer a handful" in script.urgency_element
+
 
 def test_book_call_script(base_config):
     base_config.monetization_model = MonetizationModel.BOOK_CALL
@@ -50,8 +54,9 @@ def test_book_call_script(base_config):
     assert script.cta == "Pick a Time on My Calendar"
     assert "My calendar is open" in script.urgency_element
 
+
 def test_fallback_script(base_config):
-    base_config.monetization_model = "INVALID_MODEL" # type: ignore
+    base_config.monetization_model = "INVALID_MODEL"  # type: ignore
     script = generate_upsell_script(base_config)
     assert isinstance(script, UpsellScript)
     assert "Take the next step" in script.hook
