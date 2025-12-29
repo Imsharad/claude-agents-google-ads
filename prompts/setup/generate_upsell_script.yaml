@@ -1,0 +1,38 @@
+# prompts/setup/generate_upsell_script.yaml
+# TASK-026: Jinja2 template for generating upsell scripts.
+
+{% if config.monetization_model == 'TRIPWIRE_UPSELL' %}
+# TRIPWIRE_UPSELL: Webinar Transition Script
+hook: "Now that you've secured the {{ config.offer_name }}, let's tackle the next step."
+transition: "The resource you just got is great for the basics, but if you're serious about {{ config.value_proposition_primary }}, our upcoming live webinar will walk you through the advanced strategy. We'll show you exactly how to implement this for maximum results."
+cta: "Register for the Free Training"
+urgency_element: "Limited spots are available for this quarterly training. Register now to save your seat."
+
+{% elif config.monetization_model == 'DIRECT_SALE' %}
+# DIRECT_SALE: Demo Booking Nudge
+hook: "Interested in how {{ config.offer_name }} can specifically help your business?"
+transition: "Reading about features is one thing, but seeing it live is another. In a brief 15-minute demo, we can show you how to achieve {{ config.value_proposition_primary }} and answer any questions you have. No pressure, just a clear look at the solution."
+cta: "Book a 15-Minute Demo"
+urgency_element: "Our senior specialists' calendars fill up quickly. Book now to get a slot this week."
+
+{% elif config.monetization_model == 'LEAD_GEN' %}
+# LEAD_GEN: Consultation Value Stack
+hook: "Thanks for downloading the guide to {{ config.offer_name }}!"
+transition: "That guide is a great starting point. On a brief, no-obligation consultation call, we can build a custom action plan for you, map out your strategy for achieving {{ config.value_proposition_primary }}, and identify the top 3 roadblocks you're likely to face."
+cta: "Claim Your Free Consultation"
+urgency_element: "We only offer a handful of these free strategy sessions each week. Claim yours now!"
+
+{% elif config.monetization_model == 'BOOK_CALL' %}
+# BOOK_CALL: Calendar Booking Push
+hook: "Ready to take the next step towards {{ config.value_proposition_primary }}?"
+transition: "The fastest way to get clarity and see if we're a good fit is a quick chat. You'll leave the call with a clear understanding of your next steps, whether you work with us or not. Let's find a time that works for you."
+cta: "Pick a Time on My Calendar"
+urgency_element: "My calendar is open for the next 48 hours. Please book a time that is convenient for you."
+
+{% else %}
+# Default fallback script
+hook: "Take the next step with {{ config.offer_name }}."
+transition: "Discover how our solution can help you achieve {{ config.value_proposition_primary }} with a personalized offer."
+cta: "Learn More"
+urgency_element: "This special offer is available for a limited time only."
+{% endif %}
