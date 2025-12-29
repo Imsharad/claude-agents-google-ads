@@ -130,8 +130,10 @@ class TestMicrosConversion:
 
     def test_one_rupee_equals_million_micros(self):
         """1 rupee = 1,000,000 micros in Google Ads API."""
-        # ₹1 for 1 day
-        daily_budget_micros = calculate_daily_budget(1, 1)
+        # Use a valid budget that results in a 1 rupee daily budget
+        # to test the micros conversion accurately without failing validation.
+        # ₹10,000 over 10,000 days = ₹1/day.
+        daily_budget_micros = calculate_daily_budget(10000, 10000)
         assert daily_budget_micros == 1_000_000
 
     def test_large_budget_conversion(self):
