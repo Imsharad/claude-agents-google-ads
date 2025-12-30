@@ -22,7 +22,7 @@ repos:
     rev: v1.10.0
     hooks:
     -   id: mypy
-        additional_dependencies: []
+        additional_dependencies: [types-PyYAML, pydantic]
 
 -   repo: local
     hooks:
