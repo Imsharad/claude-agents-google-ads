@@ -1,13 +1,11 @@
 # tests/test_spend_monitor.py
 
-import json
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 from google.ads.googleads.errors import GoogleAdsException
-from pydantic import ValidationError
 
 from src.monitoring.spend_monitor import (
     TARGET_SPEND_MICROS,
