@@ -32,9 +32,7 @@ class QueryBuilder:
         where_clause = ""
 
         if report_type == ReportType.CAMPAIGN:
-            select_fields.extend(
-                ["campaign.id", "campaign.name", "campaign.status"]
-            )
+            select_fields.extend(["campaign.id", "campaign.name", "campaign.status"])
             from_clause = "campaign"
         elif report_type == ReportType.AD_GROUP:
             select_fields.extend(
