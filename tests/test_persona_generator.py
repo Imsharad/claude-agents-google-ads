@@ -1,6 +1,7 @@
 """
 TASK-022: Add unit tests for the persona generator.
 """
+
 import pytest
 from unittest.mock import MagicMock, patch
 from pydantic import ValidationError
@@ -8,11 +9,13 @@ from src.generators.persona_generator import generate_personas, PersonaListSchem
 from src.models.configuration import CampaignConfiguration
 from src.models.enums import VerticalType, MonetizationModel
 
+
 @pytest.fixture
 def mock_anthropic_client():
     """Fixture to mock the Anthropic client."""
-    with patch('src.generators.persona_generator.client') as mock_client:
+    with patch("src.generators.persona_generator.client") as mock_client:
         yield mock_client
+
 
 @pytest.fixture
 def sample_config():
@@ -25,7 +28,10 @@ def sample_config():
         monetization_model=MonetizationModel.LEAD_GEN,
     )
 
-def test_generate_personas_success(mock_anthropic_client: MagicMock, sample_config: CampaignConfiguration):
+
+def test_generate_personas_success(
+    mock_anthropic_client: MagicMock, sample_config: CampaignConfiguration
+):
     """
     Tests successful persona generation with valid LLM output.
     """
@@ -60,22 +66,27 @@ def test_generate_personas_success(mock_anthropic_client: MagicMock, sample_conf
     assert result.personas[0].name == "Proactive Paul"
     mock_anthropic_client.messages.create.assert_called_once()
 
-def test_generate_personas_validation_error(mock_anthropic_client: MagicMock, sample_config: CampaignConfiguration):
+
+def test_generate_personas_validation_error(
+    mock_anthropic_client: MagicMock, sample_config: CampaignConfiguration
+):
     """
     Tests that a Pydantic ValidationError is raised for invalid LLM output.
     """
     # Simulate the LLM returning data that doesn't match the schema
     # Pydantic and instructor will raise a ValidationError internally
-    mock_anthropic_client.messages.create.side_effect = ValidationError.from_exception_data(
-        title="PersonaListSchema",
-        line_errors=[
-            {
-                "loc": ("personas", 0, "ad_group_name"),
-                "msg": "String should match pattern '^persona_[a-z_]+$'",
+    mock_anthropic_client.messages.create.side_effect = (
+        ValidationError.from_exception_data(
+            title="PersonaListSchema",
+            line_errors=[
+                {
+                    "loc": ("personas", 0, "ad_group_name"),
+                    "msg": "String should match pattern '^persona_[a-z_]+$'",
                     "type": "string_pattern_mismatch",
                     "ctx": {"pattern": "^persona_[a-z_]+$"},
-            }
-        ],
+                }
+            ],
+        )
     )
 
     with pytest.raises(ValidationError):

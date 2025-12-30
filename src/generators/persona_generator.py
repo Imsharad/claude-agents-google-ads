@@ -1,6 +1,7 @@
 """
 TASK-022: Implement Persona Generation with LLM
 """
+
 from typing import List
 from jinja2 import Template
 from pydantic import BaseModel, Field
@@ -13,14 +14,17 @@ from pathlib import Path
 # Note: The API key will be automatically picked up from the ANTHROPIC_API_KEY environment variable.
 client = instructor.from_anthropic(Anthropic())
 
+
 class PersonaSchema(BaseModel):
     name: str = Field(..., max_length=50)
     pain_point: str = Field(..., max_length=200)
     purchase_driver: str = Field(..., max_length=100)
-    ad_group_name: str = Field(..., pattern=r'^persona_[a-z_]+$')
+    ad_group_name: str = Field(..., pattern=r"^persona_[a-z_]+$")
+
 
 class PersonaListSchema(BaseModel):
     personas: List[PersonaSchema] = Field(..., min_length=3, max_length=3)
+
 
 def generate_personas(config: CampaignConfiguration) -> PersonaListSchema:
     """
