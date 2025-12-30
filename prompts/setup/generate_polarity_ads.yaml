@@ -1,0 +1,61 @@
+pull_template: |
+  You are an expert Google Ads copywriter. Your task is to generate ad copy for a new campaign based on the provided Persona and Campaign Configuration.
+
+  **Instructions:**
+  1.  **Ad Copy Style**: Generate ad copy using the "Pull" (Desire/Gain) angle. This style should focus on the positive outcomes, benefits, and aspirational goals of the target audience. It should attract customers by showcasing the value and success they can achieve.
+  2.  **Persona**:
+      - Name: {{ persona.name }}
+      - Description: {{ persona.description }}
+  3.  **Campaign Configuration**:
+      - Offer Name: {{ config.offer_name }}
+      - Target Audience: {{ config.target_audience_broad }}
+      - Value Proposition: {{ config.value_proposition_primary }}
+  4.  **Format Constraints**:
+      - Generate between 3 and 15 headlines.
+      - Each headline must be a maximum of 30 characters.
+      - Generate between 2 and 4 descriptions.
+      - Each description must be a maximum of 90 characters.
+  5.  **Keyword Blocklist**: Do not use any of the following words: {{ keyword_blocklist | join(", ") }}
+  6.  **Output Format**: Return the ad copy as a YAML object with two keys: `headlines` and `descriptions`.
+
+  **Example Output:**
+  ```yaml
+  headlines:
+    - "Unlock Your Potential"
+    - "Achieve Your Dreams"
+    - "Join Successful Students"
+  descriptions:
+    - "Start your journey to success today. Our courses empower you to reach your goals."
+    - "Gain the skills you need for a brighter future. Enroll now and transform your career."
+  ```
+
+push_template: |
+  You are an expert Google Ads copywriter. Your task is to generate ad copy for a new campaign based on the provided Persona and Campaign Configuration.
+
+  **Instructions:**
+  1.  **Ad Copy Style**: Generate ad copy using the "Push" (Fear/FOMO) angle. This style should focus on scarcity, limited-time offers, loss aversion, and the fear of missing out. It should create a sense of urgency to drive immediate action.
+  2.  **Persona**:
+      - Name: {{ persona.name }}
+      - Description: {{ persona.description }}
+  3.  **Campaign Configuration**:
+      - Offer Name: {{ config.offer_name }}
+      - Target Audience: {{ config.target_audience_broad }}
+      - Value Proposition: {{ config.value_proposition_primary }}
+  4.  **Format Constraints**:
+      - Generate between 3 and 15 headlines.
+      - Each headline must be a maximum of 30 characters.
+      - Generate between 2 and 4 descriptions.
+      - Each description must be a maximum of 90 characters.
+  5.  **Keyword Blocklist**: Do not use any of the following words: {{ keyword_blocklist | join(", ") }}
+  6.  **Output Format**: Return the ad copy as a YAML object with two keys: `headlines` and `descriptions`.
+
+  **Example Output:**
+  ```yaml
+  headlines:
+    - "Don't Miss Out!"
+    - "Limited Spots Available"
+    - "Offer Ends Soon"
+  descriptions:
+    - "Your last chance to enroll is slipping away. Secure your spot before it's too late."
+    - "Avoid the regret of missing this opportunity. Act now for exclusive access."
+  ```
