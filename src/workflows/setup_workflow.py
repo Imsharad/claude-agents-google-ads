@@ -4,6 +4,7 @@ TASK-028: Implement Campaign Setup Workflow with User Approval (Corrected)
 This version correctly uses the claude-agent-sdk's message streaming
 and built-in CLI permission handling.
 """
+
 import typer
 import json
 from typing import Optional
@@ -14,15 +15,16 @@ from claude_agent_sdk.types import (
     ToolResultBlock,
     TextBlock,
     AssistantMessage,
-    UserMessage,
 )
 from src.models.configuration import CampaignConfiguration
 from pydantic import BaseModel
+
 
 class CampaignResult(BaseModel):
     campaign_id: Optional[str] = None
     status: str
     message: Optional[str] = None
+
 
 class CampaignSetupWorkflow:
     """
@@ -74,7 +76,7 @@ class CampaignSetupWorkflow:
                             message="Campaign created successfully!",
                         )
                     else:
-                        error_message = result_data.get('error', 'Unknown error')
+                        error_message = result_data.get("error", "Unknown error")
                         return CampaignResult(
                             status="FAILED",
                             message=f"Campaign creation tool failed: {error_message}",
@@ -82,7 +84,7 @@ class CampaignSetupWorkflow:
 
         # Handle cases where the agent finishes without using a tool or stream is empty
         if final_message:
-             # The last message might be the user's "yes" or "no"
+            # The last message might be the user's "yes" or "no"
             return CampaignResult(
                 status="ABORTED", message="User did not approve the campaign creation."
             )
