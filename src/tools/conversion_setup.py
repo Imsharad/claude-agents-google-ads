@@ -55,7 +55,7 @@ def check_conversion_setup(props: CheckConversionSetupInput) -> dict:
         # Check if the iterator is empty
         first_batch = next(iter(stream_any))
         if not first_batch.results:
-             return {
+            return {
                 "status": "not_found",
                 "message": "No conversion actions found. Please set up conversion tracking in your Google Ads account. This typically requires adding a tracking tag to your website.",
             }
@@ -88,7 +88,7 @@ def check_conversion_setup(props: CheckConversionSetupInput) -> dict:
                     "message": "Conversion tracking is active and receiving impressions.",
                 }
     except StopIteration:
-        pass # Fall through to the inactive case
+        pass  # Fall through to the inactive case
 
     return {
         "status": "inactive",

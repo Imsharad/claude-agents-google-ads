@@ -3,7 +3,7 @@ TASK-030: Tests for Conversion Tracking Setup Helper
 """
 
 import unittest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 from src.tools.conversion_setup import check_conversion_setup, CheckConversionSetupInput
 
 
@@ -43,10 +43,7 @@ class TestConversionSetup(unittest.TestCase):
         mock_batch_any.results = [mock_row_any]
 
         # Second call (active actions): return no results
-        mock_ga_service.search_stream.side_effect = [
-            iter([mock_batch_any]),
-            iter([])
-        ]
+        mock_ga_service.search_stream.side_effect = [iter([mock_batch_any]), iter([])]
 
         # Call the function
         result = check_conversion_setup.handler(
@@ -81,7 +78,7 @@ class TestConversionSetup(unittest.TestCase):
 
         mock_ga_service.search_stream.side_effect = [
             iter([mock_batch_any]),
-            iter([mock_batch_active])
+            iter([mock_batch_active]),
         ]
 
         # Call the function
