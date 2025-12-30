@@ -146,8 +146,9 @@ def test_pause_underperforming_ads(mock_google_ads_client):
 
     # Mock the enums and types
     mock_google_ads_client.enums.AdGroupAdStatusEnum.PAUSED = "PAUSED"
-    mock_google_ads_client.get_type.side_effect = lambda name, **kwargs: mock.MagicMock()
-
+    mock_google_ads_client.get_type.side_effect = (
+        lambda name, **kwargs: mock.MagicMock()
+    )
 
     monitor = CTRMonitor(client=mock_google_ads_client)
     customer_id = "test_customer"

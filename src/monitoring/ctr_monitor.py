@@ -16,9 +16,13 @@ class AdPerformance(BaseModel):
     """Data model for ad performance metrics."""
 
     ad_id: str = Field(..., description="The ID of the ad.")
-    ad_group_ad_resource_name: str = Field(..., description="The resource name of the ad group ad.")
+    ad_group_ad_resource_name: str = Field(
+        ..., description="The resource name of the ad group ad."
+    )
     ctr: float = Field(..., description="The click-through rate of the ad.")
-    impressions: int = Field(..., description="The number of impressions the ad received.")
+    impressions: int = Field(
+        ..., description="The number of impressions the ad received."
+    )
     clicks: int = Field(..., description="The number of clicks the ad received.")
 
 
@@ -105,7 +109,9 @@ class CTRMonitor:
         )
         return underperforming_ad_resource_names
 
-    def pause_underperforming_ads(self, customer_id: str, ad_group_ad_resource_names: List[str]):
+    def pause_underperforming_ads(
+        self, customer_id: str, ad_group_ad_resource_names: List[str]
+    ):
         """
         Pauses a list of underperforming ads.
 
