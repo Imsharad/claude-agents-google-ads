@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from google.ads.googleads.errors import GoogleAdsException
+
 # from claude_agent_sdk.tools import tool
 
 from src.config.google_ads_client import get_google_ads_client
@@ -16,9 +17,7 @@ def _create_ad_group(
     ad_group.name = ad_group_name
     ad_group.campaign = campaign_resource_name
     ad_group.status = client.get_type("AdGroupStatusEnum").AdGroupStatus.ENABLED
-    ad_group.type_ = client.get_type(
-        "AdGroupTypeEnum"
-    ).AdGroupType.SEARCH_STANDARD
+    ad_group.type_ = client.get_type("AdGroupTypeEnum").AdGroupType.SEARCH_STANDARD
 
     try:
         ad_group_response = ad_group_service.mutate_ad_groups(
@@ -27,6 +26,7 @@ def _create_ad_group(
         return ad_group_response.results[0].resource_name
     except GoogleAdsException as ex:
         raise ex
+
 
 # @tool
 def create_growth_tier_campaign(
@@ -60,12 +60,12 @@ def create_growth_tier_campaign(
     campaign_budget.amount_micros = budget_micros
 
     try:
-        campaign_budget_response = (
-            campaign_budget_service.mutate_campaign_budgets(
-                customer_id=customer_id, operations=[campaign_budget_operation]
-            )
+        campaign_budget_response = campaign_budget_service.mutate_campaign_budgets(
+            customer_id=customer_id, operations=[campaign_budget_operation]
         )
-        campaign_budget_resource_name = campaign_budget_response.results[0].resource_name
+        campaign_budget_resource_name = campaign_budget_response.results[
+            0
+        ].resource_name
     except GoogleAdsException as ex:
         raise ex
 
@@ -81,19 +81,27 @@ def create_growth_tier_campaign(
 
     # Bidding strategy mapping
     if monetization_model == "TRIPWIRE_UPSELL":
-        campaign.bidding_strategy_type = client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CONVERSIONS
+        campaign.bidding_strategy_type = client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CONVERSIONS
         if target_cpa_micros:
             campaign.maximize_conversions.target_cpa_micros = target_cpa_micros
     elif monetization_model == "DIRECT_SALE":
-        campaign.bidding_strategy_type = client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.TARGET_ROAS
+        campaign.bidding_strategy_type = client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.TARGET_ROAS
         if target_roas:
             campaign.target_roas.target_roas = target_roas
     elif monetization_model == "LEAD_GEN":
-        campaign.bidding_strategy_type = client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CLICKS
+        campaign.bidding_strategy_type = client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CLICKS
         if cpc_bid_cap_micros:
             campaign.maximize_clicks.cpc_bid_limit_micros = cpc_bid_cap_micros
     elif monetization_model == "BOOK_CALL":
-        campaign.bidding_strategy_type = client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CONVERSIONS
+        campaign.bidding_strategy_type = client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CONVERSIONS
     else:
         raise ValueError(f"Invalid monetization_model: {monetization_model}")
 
@@ -111,8 +119,6 @@ def create_growth_tier_campaign(
     # 3. Create Ad Groups for each persona
     for persona in personas:
         ad_group_name = f"{campaign_name} - {persona.name}"
-        _create_ad_group(
-            client, customer_id, campaign_resource_name, ad_group_name
-        )
+        _create_ad_group(client, customer_id, campaign_resource_name, ad_group_name)
 
     return campaign_resource_name

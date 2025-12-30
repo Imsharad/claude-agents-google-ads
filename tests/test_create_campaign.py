@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 from google.ads.googleads.errors import GoogleAdsException
 from google.ads.googleads.v22.services.services.campaign_budget_service import (
@@ -34,6 +34,7 @@ def mock_google_ads_client():
 
     # Store and return the same mock for the same type to allow for comparison
     type_mocks = {}
+
     def get_type_mock(name):
         if name not in type_mocks:
             type_mocks[name] = MagicMock()
@@ -43,8 +44,12 @@ def mock_google_ads_client():
 
     # Mock the return value for mutate_campaign_budgets
     mock_campaign_budget_response = MagicMock()
-    mock_campaign_budget_response.results[0].resource_name = "campaignBudgetResourceName"
-    mock_campaign_budget_service.mutate_campaign_budgets.return_value = mock_campaign_budget_response
+    mock_campaign_budget_response.results[0].resource_name = (
+        "campaignBudgetResourceName"
+    )
+    mock_campaign_budget_service.mutate_campaign_budgets.return_value = (
+        mock_campaign_budget_response
+    )
 
     # Mock the return value for mutate_campaigns
     mock_campaign_response = MagicMock()
@@ -60,7 +65,9 @@ def mock_google_ads_client():
 
 
 @patch("src.tools.create_campaign.get_google_ads_client")
-def test_create_campaign_tripwire_upsell(mock_get_google_ads_client, mock_google_ads_client):
+def test_create_campaign_tripwire_upsell(
+    mock_get_google_ads_client, mock_google_ads_client
+):
     mock_get_google_ads_client.return_value = mock_google_ads_client
     personas = [Persona(name="Test Persona", description="")]
 
@@ -78,13 +85,17 @@ def test_create_campaign_tripwire_upsell(mock_get_google_ads_client, mock_google
     campaign = campaign_operation.create
     assert (
         campaign.bidding_strategy_type
-        == mock_google_ads_client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CONVERSIONS
+        == mock_google_ads_client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CONVERSIONS
     )
     assert campaign.maximize_conversions.target_cpa_micros == 10000
 
 
 @patch("src.tools.create_campaign.get_google_ads_client")
-def test_create_campaign_direct_sale(mock_get_google_ads_client, mock_google_ads_client):
+def test_create_campaign_direct_sale(
+    mock_get_google_ads_client, mock_google_ads_client
+):
     mock_get_google_ads_client.return_value = mock_google_ads_client
     personas = [Persona(name="Test Persona", description="")]
 
@@ -102,7 +113,9 @@ def test_create_campaign_direct_sale(mock_get_google_ads_client, mock_google_ads
     campaign = campaign_operation.create
     assert (
         campaign.bidding_strategy_type
-        == mock_google_ads_client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.TARGET_ROAS
+        == mock_google_ads_client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.TARGET_ROAS
     )
     assert campaign.target_roas.target_roas == 3.5
 
@@ -126,7 +139,9 @@ def test_create_campaign_lead_gen(mock_get_google_ads_client, mock_google_ads_cl
     campaign = campaign_operation.create
     assert (
         campaign.bidding_strategy_type
-        == mock_google_ads_client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CLICKS
+        == mock_google_ads_client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CLICKS
     )
     assert campaign.maximize_clicks.cpc_bid_limit_micros == 50000
 
@@ -149,7 +164,9 @@ def test_create_campaign_book_call(mock_get_google_ads_client, mock_google_ads_c
     campaign = campaign_operation.create
     assert (
         campaign.bidding_strategy_type
-        == mock_google_ads_client.get_type("BiddingStrategyTypeEnum").BiddingStrategyType.MAXIMIZE_CONVERSIONS
+        == mock_google_ads_client.get_type(
+            "BiddingStrategyTypeEnum"
+        ).BiddingStrategyType.MAXIMIZE_CONVERSIONS
     )
 
 
@@ -175,7 +192,10 @@ def test_ad_group_creation(mock_get_google_ads_client, mock_google_ads_client):
     assert ad_group_service.mutate_ad_groups.call_count == 2
 
     # Check that it was called with the correct persona names, regardless of order
-    call_args = [call[1]['operations'][0].create.name for call in ad_group_service.mutate_ad_groups.call_args_list]
+    call_args = [
+        call[1]["operations"][0].create.name
+        for call in ad_group_service.mutate_ad_groups.call_args_list
+    ]
     assert "Test Ad Group Campaign - Persona A" in call_args
     assert "Test Ad Group Campaign - Persona B" in call_args
 
@@ -194,14 +214,18 @@ def test_invalid_monetization_model(mock_get_google_ads_client, mock_google_ads_
 
 
 @patch("src.tools.create_campaign.get_google_ads_client")
-def test_google_ads_exception_propagation(mock_get_google_ads_client, mock_google_ads_client):
+def test_google_ads_exception_propagation(
+    mock_get_google_ads_client, mock_google_ads_client
+):
     mock_get_google_ads_client.return_value = mock_google_ads_client
 
     mock_error = MagicMock()
     mock_failure = MagicMock()
     mock_failure.errors = [mock_error]
 
-    campaign_budget_service = mock_google_ads_client.get_service("CampaignBudgetService")
+    campaign_budget_service = mock_google_ads_client.get_service(
+        "CampaignBudgetService"
+    )
     campaign_budget_service.mutate_campaign_budgets.side_effect = GoogleAdsException(
         failure=mock_failure, call=MagicMock(), error=mock_error, request_id="12345"
     )
