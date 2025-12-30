@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install black ruff mypy pytest pytest-cov pytest-asyncio pre-commit
+          pip install black ruff mypy pytest pytest-cov pytest-asyncio pre-commit types-PyYAML
 
       - name: Run pre-commit hooks (linting, formatting, type checking)
         run: pre-commit run --all-files
