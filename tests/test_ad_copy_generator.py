@@ -1,18 +1,19 @@
 """
 Unit tests for the ad_copy_generator module.
 """
+
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from pydantic import ValidationError
 from src.generators.ad_copy_generator import (
     generate_polarity_ads,
     AdCopySchema,
     AdVariation,
-    KEYWORD_BLOCKLIST,
 )
 from src.generators.persona_generator import PersonaSchema
 from src.models.configuration import CampaignConfiguration
 from src.models.enums import VerticalType, MonetizationModel
+
 
 @pytest.fixture
 def mock_persona():
@@ -23,6 +24,7 @@ def mock_persona():
         purchase_driver="Needs reliable code.",
         ad_group_name="persona_test_group",
     )
+
 
 @pytest.fixture
 def mock_config():
@@ -35,7 +37,8 @@ def mock_config():
         monetization_model=MonetizationModel.DIRECT_SALE,
     )
 
-@patch('src.generators.ad_copy_generator.client')
+
+@patch("src.generators.ad_copy_generator.client")
 def test_generate_polarity_ads_success(mock_client, mock_persona, mock_config):
     """
     Tests successful generation of PULL and PUSH ad variations.
@@ -73,16 +76,17 @@ def test_generate_polarity_ads_success(mock_client, mock_persona, mock_config):
     call_args = mock_client.messages.create.call_args_list
 
     # Check Pull Prompt
-    pull_prompt = call_args[0].kwargs['messages'][0]['content']
-    assert "ad copy using the \"Pull\" (Desire/Gain) angle" in pull_prompt
+    pull_prompt = call_args[0].kwargs["messages"][0]["content"]
+    assert 'ad copy using the "Pull" (Desire/Gain) angle' in pull_prompt
     assert "Name: Test Persona" in pull_prompt
     assert "Offer Name: Test Offer" in pull_prompt
 
     # Check Push Prompt
-    push_prompt = call_args[1].kwargs['messages'][0]['content']
-    assert "ad copy using the \"Push\" (Fear/FOMO) angle" in push_prompt
+    push_prompt = call_args[1].kwargs["messages"][0]["content"]
+    assert 'ad copy using the "Push" (Fear/FOMO) angle' in push_prompt
     assert "Name: Test Persona" in push_prompt
     assert "Offer Name: Test Offer" in push_prompt
+
 
 def test_ad_copy_schema_validation():
     """
@@ -102,10 +106,15 @@ def test_ad_copy_schema_validation():
         )
 
     # Test description too long
-    with pytest.raises(ValidationError, match="Description must be 90 characters or less"):
+    with pytest.raises(
+        ValidationError, match="Description must be 90 characters or less"
+    ):
         AdCopySchema(
             headlines=["Valid Headline"] * 3,
-            descriptions=["This description is extremely long and will fail the validation check because it exceeds the ninety character limit."] * 2,
+            descriptions=[
+                "This description is extremely long and will fail the validation check because it exceeds the ninety character limit."
+            ]
+            * 2,
         )
 
     # Test too few headlines
@@ -122,5 +131,5 @@ def test_ad_copy_schema_validation():
     with pytest.raises(ValidationError, match="Ad copy contains a blocked keyword"):
         AdCopySchema(
             headlines=["Valid Headline"] * 3,
-            descriptions=["This is a risk-free offer.", "Another description."]
+            descriptions=["This is a risk-free offer.", "Another description."],
         )
