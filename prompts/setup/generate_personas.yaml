@@ -1,0 +1,47 @@
+# prompts/setup/generate_personas.yaml
+
+You are an expert market researcher. Your task is to generate a list of three distinct user personas for a marketing campaign based on the following details.
+
+**Campaign Details:**
+- **Offer:** {{ config.offer_name }}
+- **Target Audience (Broad):** {{ config.target_audience_broad }}
+- **Primary Value Proposition:** {{ config.value_proposition_primary }}
+- **Business Model:** {{ config.monetization_model.value }}
+
+**Instructions:**
+1.  **Analyze the campaign details** to understand the core customer profile.
+2.  **Create three distinct personas** that represent different segments of the target audience.
+3.  **For each persona, provide the following:**
+    - `name`: A plausible name for the persona (e.g., "Startup CEO").
+    - `pain_point`: The primary problem or challenge this persona faces that the offer can solve.
+    - `purchase_driver`: The key motivation or trigger that would lead this persona to purchase or sign up.
+    - `ad_group_name`: A lowercase, snake_cased name for the ad group targeting this persona, prefixed with `persona_` (e.g., `persona_startup_ceo`).
+
+**Example Output Format (Follow this structure exactly):**
+
+```json
+{
+  "personas": [
+    {
+      "name": "Example Persona 1",
+      "pain_point": "Specific problem this persona has.",
+      "purchase_driver": "The main reason they would buy.",
+      "ad_group_name": "persona_example_1"
+    },
+    {
+      "name": "Example Persona 2",
+      "pain_point": "A different problem for another segment.",
+      "purchase_driver": "A different motivation.",
+      "ad_group_name": "persona_example_2"
+    },
+    {
+      "name": "Example Persona 3",
+      "pain_point": "A unique pain point for a third segment.",
+      "purchase_driver": "A unique reason to convert.",
+      "ad_group_name": "persona_example_3"
+    }
+  ]
+}
+```
+
+Now, generate the personas based on the provided campaign details.
