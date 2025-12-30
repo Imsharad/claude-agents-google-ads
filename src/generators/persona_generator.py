@@ -18,7 +18,7 @@ client = instructor.from_anthropic(Anthropic())
 class PersonaSchema(BaseModel):
     name: str = Field(..., max_length=50)
     pain_point: str = Field(..., max_length=200)
-    purchase_driver: str = Field(..., max_length=100)
+    purchase_driver: str = Field(..., max_length=150)
     ad_group_name: str = Field(..., pattern=r"^persona_[a-z_]+$")
 
 

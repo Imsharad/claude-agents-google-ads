@@ -3,6 +3,12 @@ name = "google-ads-automation-agent"
 version = "0.1.0"
 description = "A Google Ads automation agent."
 requires-python = ">=3.9"
+dependencies = [
+    "typer>=0.9.0",
+]
+
+[project.scripts]
+ads-agent = "cli:app"
 
 [build-system]
 requires = ["setuptools>=61.0"]

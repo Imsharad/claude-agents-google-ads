@@ -10,10 +10,10 @@ from pathlib import Path
 
 
 class UpsellScript(BaseModel):
-    hook: str = Field(..., max_length=100)
-    transition: str = Field(..., max_length=300)
-    cta: str = Field(..., max_length=50)
-    urgency_element: str = Field(..., max_length=100)
+    hook: str = Field(..., max_length=150)
+    transition: str = Field(..., max_length=500)
+    cta: str = Field(..., max_length=75)
+    urgency_element: str = Field(..., max_length=150)
 
 
 def generate_upsell_script(config: CampaignConfiguration) -> UpsellScript:

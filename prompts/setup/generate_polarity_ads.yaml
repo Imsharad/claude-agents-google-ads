@@ -1,61 +1,105 @@
 pull_template: |
-  You are an expert Google Ads copywriter. Your task is to generate ad copy for a new campaign based on the provided Persona and Campaign Configuration.
+  You are an expert Google Ads copywriter. Generate ad copy using the "Pull" (Desire/Gain) angle - focus on positive outcomes, benefits, and aspirational goals.
 
-  **Instructions:**
-  1.  **Ad Copy Style**: Generate ad copy using the "Pull" (Desire/Gain) angle. This style should focus on the positive outcomes, benefits, and aspirational goals of the target audience. It should attract customers by showcasing the value and success they can achieve.
-  2.  **Persona**:
-      - Name: {{ persona.name }}
-      - Description: {{ persona.description }}
-  3.  **Campaign Configuration**:
-      - Offer Name: {{ config.offer_name }}
-      - Target Audience: {{ config.target_audience_broad }}
-      - Value Proposition: {{ config.value_proposition_primary }}
-  4.  **Format Constraints**:
-      - Generate between 3 and 15 headlines.
-      - Each headline must be a maximum of 30 characters.
-      - Generate between 2 and 4 descriptions.
-      - Each description must be a maximum of 90 characters.
-  5.  **Keyword Blocklist**: Do not use any of the following words: {{ keyword_blocklist | join(", ") }}
-  6.  **Output Format**: Return the ad copy as a YAML object with two keys: `headlines` and `descriptions`.
+  **Persona:**
+  - Name: {{ persona.name }}
+  - Pain Point: {{ persona.pain_point }}
+  - Purchase Driver: {{ persona.purchase_driver }}
 
-  **Example Output:**
+  **Campaign:**
+  - Offer: {{ config.offer_name }}
+  - Target Audience: {{ config.target_audience_broad }}
+  - Value Proposition: {{ config.value_proposition_primary }}
+
+  ---
+  **STRICT RULES - VIOLATIONS WILL BE REJECTED:**
+
+  1. **CHARACTER LIMITS (count every character including spaces):**
+     - Headlines: MAX 30 characters each
+     - Descriptions: MAX 90 characters each
+     - NEVER exceed these limits
+
+  2. **BANNED WORDS (do not use these anywhere):**
+     {{ keyword_blocklist | join(", ") }}
+     - Do NOT use "free" even if the offer mentions it
+     - Do NOT use "guarantee" or "guaranteed"
+     - Do NOT use "risk-free" or "no-risk"
+
+  ---
+  **EXAMPLES OF VALID HEADLINES (≤30 chars):**
+  - "Grow Your Business" (18)
+  - "Start Today" (11)
+  - "See Real Results Now" (20)
+  - "Transform Your Career" (21)
+  - "Join 10K+ Happy Users" (21)
+  - "Boost Productivity" (18)
+  - "Save Time Daily" (15)
+
+  **EXAMPLES OF VALID DESCRIPTIONS (≤90 chars):**
+  - "Boost productivity with our proven solution. Start your journey today." (70)
+  - "Thousands of customers trust us. See why they switched." (55)
+  - "Streamline your workflow and achieve more in less time." (55)
+
+  ---
+  **OUTPUT FORMAT:**
+  Generate 5-10 headlines and 2-4 descriptions as YAML:
   ```yaml
   headlines:
-    - "Unlock Your Potential"
-    - "Achieve Your Dreams"
-    - "Join Successful Students"
+    - "Short Headline One"
+    - "Short Headline Two"
   descriptions:
-    - "Start your journey to success today. Our courses empower you to reach your goals."
-    - "Gain the skills you need for a brighter future. Enroll now and transform your career."
+    - "Description under 90 characters."
   ```
 
 push_template: |
-  You are an expert Google Ads copywriter. Your task is to generate ad copy for a new campaign based on the provided Persona and Campaign Configuration.
+  You are an expert Google Ads copywriter. Generate ad copy using the "Push" (Fear/FOMO) angle - focus on scarcity, urgency, loss aversion, and fear of missing out.
 
-  **Instructions:**
-  1.  **Ad Copy Style**: Generate ad copy using the "Push" (Fear/FOMO) angle. This style should focus on scarcity, limited-time offers, loss aversion, and the fear of missing out. It should create a sense of urgency to drive immediate action.
-  2.  **Persona**:
-      - Name: {{ persona.name }}
-      - Description: {{ persona.description }}
-  3.  **Campaign Configuration**:
-      - Offer Name: {{ config.offer_name }}
-      - Target Audience: {{ config.target_audience_broad }}
-      - Value Proposition: {{ config.value_proposition_primary }}
-  4.  **Format Constraints**:
-      - Generate between 3 and 15 headlines.
-      - Each headline must be a maximum of 30 characters.
-      - Generate between 2 and 4 descriptions.
-      - Each description must be a maximum of 90 characters.
-  5.  **Keyword Blocklist**: Do not use any of the following words: {{ keyword_blocklist | join(", ") }}
-  6.  **Output Format**: Return the ad copy as a YAML object with two keys: `headlines` and `descriptions`.
+  **Persona:**
+  - Name: {{ persona.name }}
+  - Pain Point: {{ persona.pain_point }}
+  - Purchase Driver: {{ persona.purchase_driver }}
 
-  **Example Output:**
+  **Campaign:**
+  - Offer: {{ config.offer_name }}
+  - Target Audience: {{ config.target_audience_broad }}
+  - Value Proposition: {{ config.value_proposition_primary }}
+
+  ---
+  **STRICT RULES - VIOLATIONS WILL BE REJECTED:**
+
+  1. **CHARACTER LIMITS (count every character including spaces):**
+     - Headlines: MAX 30 characters each
+     - Descriptions: MAX 90 characters each
+     - NEVER exceed these limits
+
+  2. **BANNED WORDS (do not use these anywhere):**
+     {{ keyword_blocklist | join(", ") }}
+     - Do NOT use "free" even if the offer mentions it
+     - Do NOT use "guarantee" or "guaranteed"
+     - Do NOT use "risk-free" or "no-risk"
+
+  ---
+  **EXAMPLES OF VALID HEADLINES (≤30 chars):**
+  - "Don't Miss Out!" (15)
+  - "Limited Spots Left" (18)
+  - "Offer Ends Soon" (15)
+  - "Act Now, Save Big" (17)
+  - "Last Chance Today" (17)
+  - "Time Running Out" (16)
+  - "Claim Your Spot Now" (19)
+
+  **EXAMPLES OF VALID DESCRIPTIONS (≤90 chars):**
+  - "Don't wait until it's too late. Join thousands who took action." (64)
+  - "Spots are filling fast. Secure yours before this offer ends." (61)
+  - "Your competitors are already using this. Don't fall behind." (60)
+
+  ---
+  **OUTPUT FORMAT:**
+  Generate 5-10 headlines and 2-4 descriptions as YAML:
   ```yaml
   headlines:
-    - "Don't Miss Out!"
-    - "Limited Spots Available"
-    - "Offer Ends Soon"
+    - "Short Headline One"
+    - "Short Headline Two"
   descriptions:
-    - "Your last chance to enroll is slipping away. Secure your spot before it's too late."
-    - "Avoid the regret of missing this opportunity. Act now for exclusive access."
+    - "Urgency-focused description under 90 characters."
   ```
