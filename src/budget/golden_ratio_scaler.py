@@ -40,7 +40,9 @@ class GoldenRatioScaler:
         total_spend = total_spend_micros / 1_000_000
         cac = total_spend / conversions
         if cac == 0:
-            return float("inf") # Avoid division by zero if spend is zero but conversions are not
+            return float(
+                "inf"
+            )  # Avoid division by zero if spend is zero but conversions are not
 
         return avg_ltv / cac
 
